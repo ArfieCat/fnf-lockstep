@@ -3,7 +3,6 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxRandom;
 import flixel.util.FlxTimer;
 
 /*
@@ -14,20 +13,22 @@ class TitleState extends MusicBeatState
 {
 	var logo:FlxSprite;
 	var prompt:Alphabet;
+
 	var black:FlxSprite;
 	var textGroup:FlxSpriteGroup;
-	var quip:Array<String>;
+	
+	var quip:Array<String> = [];
 
 	// FLAGS
-	var finishedIntro:Bool = false;		// intro sequence finished or was skipped
+	var finishedIntro:Bool = false;			// intro sequence finished or was skipped
+	var selectedSomething:Bool = false;		// user has pressed enter to start
 
 	override function create()
 	{
+		MusicBeatState.playTransOut = false;
 		super.create();
 
-		// putting this here instead of Main.hx to simplify things
-		FlxG.save.bind('game');
-		ClientPrefs.loadSettings();
+		ClientPrefs.loadSettings('game');
 
 		logo = new FlxSprite(0, -80);
 		logo.frames = Paths.getSparrowAtlas('ui/logoBumpin');
@@ -36,29 +37,33 @@ class TitleState extends MusicBeatState
 		logo.screenCenter(X);
 		add(logo);
 
-		prompt = new Alphabet(0, 600, 'Press ENTER to start', true);
+		prompt = new Alphabet(0, 600, 'Press ENTER to start');
 		prompt.screenCenter(X);
 		add(prompt);
 
 		if (!FlxG.save.data.seenWarning)
+		{
 			openSubState(new FlashingSubstate(startIntro));
+		}
 		else
+		{
 			startIntro();
+		}
 	}
 
 	function startIntro()
 	{
 		quip = getRandomQuip();
 
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
-		FlxG.sound.music.fadeIn(3, 0, 0.6);
-		Conductor.changeBPM(102);
-
 		black = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(black);
 
 		textGroup = new FlxSpriteGroup();
 		add(textGroup);
+
+		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+		FlxG.sound.music.fadeOut(3, 0.6);						// using fadeOut to fade in. genius!
+		Conductor.changeBPM(102);
 	}
 
 	function skipIntro()
@@ -74,13 +79,16 @@ class TitleState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER) {
+		if (FlxG.keys.justPressed.ENTER)
+		{
 			if (!finishedIntro)
 			{
 				skipIntro();
 			}
-			else
+			else if (!selectedSomething)
 			{
+				selectedSomething = true;
+
 				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 
@@ -103,19 +111,22 @@ class TitleState extends MusicBeatState
 			switch (curBeat)
 			{
 				case 1:
-					addText('ArfieCat', 15);
+					addText('ArfieCat', 30);
 				case 3:
 					addText('Presents', 30);
 				case 4:
 					textGroup.clear();
 				case 5:
-					addText('Wait', 15);
+					addText('Wait', 30);
 				case 7:
 					addText('Is this even FNF anymore?', 30);
 				case 8:
 					textGroup.clear();
 				case 9:
-					addText(quip[0], 15);
+					if (quip[1] != '')
+						addText(quip[0], 30);
+					else
+						addText(quip[0], 60);
 				case 11:
 					addText(quip[1], 30);
 				case 12:
@@ -134,7 +145,7 @@ class TitleState extends MusicBeatState
 
 	function addText(text:String, offset:Int = 0)
 	{
-		var newText:Alphabet = new Alphabet(0, 0, text, true);
+		var newText:Alphabet = new Alphabet(0, 0, text);
 		newText.screenCenter(X);
 		newText.y += textGroup.length * 60 + 240 + offset;
 		
@@ -151,7 +162,7 @@ class TitleState extends MusicBeatState
 			pairs.push(i.split('--'));
 		}
 
-		var quip:Array<String> = pairs[new FlxRandom().int(0, pairs.length - 1)];
+		var quip:Array<String> = pairs[Std.random(pairs.length)];
 		return quip;
 	}
 }

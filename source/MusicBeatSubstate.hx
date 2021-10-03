@@ -20,12 +20,16 @@ class MusicBeatSubstate extends FlxSubState
 		var oldStep:Int = curStep;
 
 		if (FlxG.sound.music != null)
+		{
 			Conductor.songPosition = FlxG.sound.music.time;
+		}
 
 		updateTiming();
 
 		if (oldStep != curStep && curStep > 0)
+		{
 			stepHit();
+		}
 	}
 
 	function updateTiming()
@@ -53,7 +57,9 @@ class MusicBeatSubstate extends FlxSubState
 	function stepHit()
 	{
 		if (curStep % 4 == 0)
+		{
 			beatHit();
+		}
 	}
 
 	function beatHit()

@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxSort;
 import flixel.FlxG;
 import openfl.utils.Assets;
 
@@ -14,11 +15,17 @@ class Utils
 	public static function boundTo(value:Float, min:Float, max:Float):Float
 	{
 		if (value < min)
+		{
 			return min;
-		else if (value > max)
+		}	
+		else if (value > max || Math.isNaN(value))
+		{
 			return max;
+		}
 		else
+		{
 			return value;
+		}
 	}
 
 	public static inline function formatToSongPath(songName:String):String		// 'Dad Battle' => 'dad-battle'
@@ -41,6 +48,13 @@ class Utils
 	public static function precacheSound(sound:String)
 	{
 		if (!Assets.cache.hasSound(Paths.sound(sound)))
+		{
 			FlxG.sound.cache(Paths.sound(sound));
+		}
+	}
+
+	public static inline function sortByStrumTime(a:Note, b:Note):Int	
+	{
+		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);
 	}
 }

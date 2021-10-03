@@ -3,7 +3,6 @@ package;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.addons.transition.FlxTransitionableState;
 
 /*
 Extendable FlxState that implements basic rhythm functionality, as well as custom transitions.
@@ -14,14 +13,21 @@ class MusicBeatState extends FlxState
 	var curStep:Int = 0;
 	var curBeat:Int = 0;
 
+	public static var playTransOut:Bool = true;
+	public static var playTransIn:Bool = true;
+
 	override function create()
 	{
 		super.create();
 
-		if(!FlxTransitionableState.skipNextTransOut)
+		if (playTransOut)
+		{
 			openSubState(new TransitionSubstate(1, true));
+		}
 		else
-			FlxTransitionableState.skipNextTransOut = false;
+		{
+			playTransOut = !playTransOut;
+		}
 	}
 
 	override function update(elapsed:Float)
@@ -31,12 +37,16 @@ class MusicBeatState extends FlxState
 		var oldStep:Int = curStep;
 
 		if (FlxG.sound.music != null)
+		{
 			Conductor.songPosition = FlxG.sound.music.time;
+		}
 
 		updateTiming();
 
 		if (oldStep != curStep && curStep > 0)
+		{
 			stepHit();
+		}
 	}
 
 	function updateTiming()
@@ -63,17 +73,16 @@ class MusicBeatState extends FlxState
 
 	public static function switchState(nextState:FlxState)
 	{
-		if (!FlxTransitionableState.skipNextTransIn)
+		if (playTransIn)
 		{
-			FlxG.state.openSubState(new TransitionSubstate(0.5, false));
-			TransitionSubstate.finishCallback = function()
+			FlxG.state.openSubState(new TransitionSubstate(0.5, false, function()
 			{
 				FlxG.switchState(nextState);
-			};
+			}));
 		}
 		else
 		{
-			FlxTransitionableState.skipNextTransIn = false;
+			playTransIn = !playTransIn;
 			FlxG.switchState(nextState);
 		}
 	}
@@ -81,7 +90,9 @@ class MusicBeatState extends FlxState
 	function stepHit():Void
 	{
 		if (curStep % 4 == 0)
+		{
 			beatHit();
+		}
 	}
 
 	function beatHit():Void

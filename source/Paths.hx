@@ -64,9 +64,9 @@ class Paths
 		return getPath('sounds/${dir}.ogg', SOUND);
 	}
 
-	public static inline function soundRandom(dir:String, max:Int):String		// use with files numbered 0...max (inclusive)
+	public static inline function soundRandom(dir:String, max:Int):String		// use with files numbered 0...max (exclusive)
 	{
-		return sound(dir + FlxG.random.int(0, max));
+		return sound(dir + Std.random(max));
 	}
 
 	// --- music folder: ogg (for music) ---
@@ -78,12 +78,12 @@ class Paths
 
 	public static inline function inst(songName:String):String
 	{
-		return music('${songName}/Inst.ogg');
+		return music('${songName}/Inst');
 	}
 
 	public static inline function voices(songName:String):String
 	{
-		return music('${songName}/Voices.ogg');
+		return music('${songName}/Voices');
 	}
 
 	// --- fonts folder: ttf ---

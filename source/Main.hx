@@ -29,9 +29,13 @@ class Main extends Sprite
 		super();
 
 		if (stage != null)
+		{
 			init();
+		}
 		else
+		{
 			addEventListener(Event.ADDED_TO_STAGE, init);
+		}
 	}
 
 	public static function main()
@@ -42,7 +46,9 @@ class Main extends Sprite
 	function init(?E:Event)
 	{
 		if (hasEventListener(Event.ADDED_TO_STAGE))
+		{
 			removeEventListener(Event.ADDED_TO_STAGE, init);
+		}
 
 		setupGame();
 	}

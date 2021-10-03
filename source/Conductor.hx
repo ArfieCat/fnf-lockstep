@@ -22,7 +22,7 @@ class Conductor
 	public static var songPosition:Float;
 	public static var lastSongPos:Float;
 	public static var offset:Float = 0;
-	public static var safeFrames:Int = 10;
+	public static var safeFrames:Int = 5;
 
 	public static var crochet:Float = ((60 / bpm) * 1000); 				// beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; 					// steps in milliseconds
@@ -35,16 +35,20 @@ class Conductor
 		var curBPM:Float = song.bpm;
 		var totalSteps:Int = 0;
 		var totalPos:Float = 0;
+
 		for (i in 0...song.notes.length)
 		{
 			if(song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
 			{
 				curBPM = song.notes[i].bpm;
-				var event:BPMChangeEvent = {
+
+				var event:BPMChangeEvent = 
+				{
 					stepTime: totalSteps,
 					songTime: totalPos,
 					bpm: curBPM
 				};
+				
 				bpmChangeMap.push(event);
 			}
 
@@ -52,6 +56,7 @@ class Conductor
 			totalSteps += deltaSteps;
 			totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
 		}
+
 		trace("New BPM map: " + bpmChangeMap);
 	}
 
