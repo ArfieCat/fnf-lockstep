@@ -40,7 +40,7 @@ class Stepswitcher extends FlxSprite
 		addOffset('singLEFTmiss', 16, -1);
 		addOffset('singRIGHTmiss', -38, -1);
 
-        animation.play('idle');
+        playAnim('bop');
 	}
 
     override function clone():Stepswitcher

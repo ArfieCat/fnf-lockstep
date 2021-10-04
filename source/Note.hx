@@ -37,7 +37,7 @@ class Note extends FlxSprite
 
 	function loadNoteAnims()
 	{
-		frames = Paths.getSparrowAtlas('ui/NOTE_assets');
+		frames = Paths.getSparrowAtlas('gameplay/NOTE_assets');
 		antialiasing = ClientPrefs.antialiasing;
 
 		animation.addByPrefix('greenScroll', 'green0');
