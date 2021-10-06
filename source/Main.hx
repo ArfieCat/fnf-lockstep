@@ -9,7 +9,7 @@ import openfl.display.Sprite;
 import openfl.events.Event;
 
 /*
-Sets up the game, loads the save file, etc.
+Initializes the game.
 */
 
 class Main extends Sprite

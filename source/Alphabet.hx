@@ -6,7 +6,7 @@ import flixel.group.FlxSpriteGroup;
 using StringTools;
 
 /*
-Object class that creates custom text for menus. Copied from Psych Engine for now.
+Creates custom text for menus.
 */
 
 class Alphabet extends FlxSpriteGroup
@@ -77,7 +77,7 @@ class Alphabet extends FlxSpriteGroup
 }
 
 /*
-Object class that creates letters for Alphabet.
+Creates letters for Alphabet.
 */
 
 class AlphabetCharacter extends FlxSprite

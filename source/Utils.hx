@@ -7,7 +7,7 @@ import openfl.utils.Assets;
 using StringTools;
 
 /*
-Helper class that contains miscellaneous useful functions.
+Contains miscellaneous useful functions.
 */
 
 class Utils
@@ -43,14 +43,6 @@ class Utils
 		}
 
 		return text;
-	}
-
-	public static function precacheSound(sound:String)
-	{
-		if (!Assets.cache.hasSound(Paths.sound(sound)))
-		{
-			FlxG.sound.cache(Paths.sound(sound));
-		}
 	}
 
 	public static inline function sortByStrumTime(a:Note, b:Note):Int	

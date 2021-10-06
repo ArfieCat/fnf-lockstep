@@ -4,6 +4,10 @@ import flixel.FlxSprite;
 
 using StringTools;
 
+/*
+Creates and manages notes and their properties.
+*/
+
 class Note extends FlxSprite
 {
 	public var strumTime:Float;

@@ -1,15 +1,12 @@
 package;
 
-import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 
 /*
-FlxSubstate that contains a custom transition that doesn't bug out like the vanilla one.
+Substate containing a custom fade transition.
 */
 
 class TransitionSubstate extends MusicBeatSubstate
@@ -26,17 +23,18 @@ class TransitionSubstate extends MusicBeatSubstate
 
 		this.isTransIn = isTransIn;
 		this.finishCallback = finishCallback;
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		var zoom:Float = Utils.boundTo(FlxG.camera.zoom, 0.05, 1);
 		var width:Int = Std.int(FlxG.width / zoom);
 		var height:Int = Std.int(FlxG.height / zoom);
 		
-		transGradient = FlxGradient.createGradientFlxSprite(width, height, (isTransIn ? [0x0, FlxColor.BLACK] : [FlxColor.BLACK, 0x0]));
+		transGradient = FlxGradient.createGradientFlxSprite(width, height, (isTransIn ? [0x0, 0xFF000000] : [0xFF000000, 0x0]));
 		transGradient.scrollFactor.set();
 		transGradient.screenCenter(X);
 		add(transGradient);
 
-		transBlack = new FlxSprite().makeGraphic(width, height + 400, FlxColor.BLACK);
+		transBlack = new FlxSprite().makeGraphic(width, height + 400, 0xFF000000);
 		transBlack.scrollFactor.set();
 		transBlack.screenCenter(X);
 		add(transBlack);
@@ -49,7 +47,8 @@ class TransitionSubstate extends MusicBeatSubstate
 				onComplete: function(twn:FlxTween) 
 				{
 					close();
-				}});
+				}
+			});
 		}
 		else
 		{
@@ -63,7 +62,8 @@ class TransitionSubstate extends MusicBeatSubstate
 					{
 						finishCallback();
 					}
-				}});
+				}
+			});
 		}
 	}
 

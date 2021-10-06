@@ -1,6 +1,5 @@
 package;
 
-import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.Assets;
 import openfl.utils.AssetType;
@@ -8,7 +7,7 @@ import openfl.utils.AssetType;
 using StringTools;
 
 /*
-Helper class that returns paths to assets. Note that this mod uses a different file structure!
+Returns asset paths. This mod uses a different file structure!
 */
 
 class Paths

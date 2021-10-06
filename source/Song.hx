@@ -23,19 +23,10 @@ typedef SwagSong =
 	var bpm:Float;
 	var needsVoices:Bool;
 	var speed:Float;
-
-	var player1:String;
-	var player2:String;
-	var player3:String;
-	var stage:String;
-
-	var arrowSkin:String;
-	var splashSkin:String;
-	var validScore:Bool;
 }
 
 /*
-Custom class containing information about songs. Copied from Psych Engine for now.
+Creates song objects from JSON files.
 */
 
 class Song
@@ -46,15 +37,6 @@ class Song
 	public var needsVoices:Bool = true;
 	public var speed:Float = 1;
 
-	public var player1:String = 'bf';
-	public var player2:String = 'dad';
-	public var player3:String = 'gf';
-	public var stage:String;
-
-	public var arrowSkin:String;
-	public var splashSkin:String;
-	public var validScore:Bool;
-
 	public function new(song, notes, bpm)
 	{
 		this.song = song;
@@ -64,36 +46,13 @@ class Song
 
 	public static function loadFromJson(jsonInput:String):SwagSong
 	{
-		var rawJson = null;
-		
 		var formattedSong:String = Utils.formatToSongPath(jsonInput);
-
-		if (rawJson == null)
-		{
-			rawJson = Assets.getText(Paths.json(formattedSong)).trim();
-		}
+		var rawJson:String = Assets.getText(Paths.json(formattedSong)).trim();
 
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
-			// LOL GOING THROUGH THE BULLSHIT TO CLEAN IDK WHATS STRANGE
 		}
-
-		// FIX THE CASTING ON WINDOWS/NATIVE
-		// Windows???
-		// trace(songData);
-
-		// trace('LOADED FROM JSON: ' + songData.notes);
-		/* 
-			for (i in 0...songData.notes.length)
-			{
-				trace('LOADED FROM JSON: ' + songData.notes[i].sectionNotes);
-				// songData.notes[i].sectionNotes = songData.notes[i].sectionNotes
-			}
-
-				daNotes = songData.notes;
-				daSong = songData.song;
-				daBpm = songData.bpm; */
 
 		var songJson:SwagSong = parseJSONshit(rawJson);
 		return songJson;
@@ -102,7 +61,6 @@ class Song
 	public static function parseJSONshit(rawJson:String):SwagSong
 	{
 		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		swagShit.validScore = true;
 		return swagShit;
 	}
 }

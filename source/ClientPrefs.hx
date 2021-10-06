@@ -11,7 +11,7 @@ Copied from Psych Engine and non-functional for now.
 class ClientPrefs
 {
 	public static var antialiasing:Bool = true;
-	public static var easyMode:Bool = false;
+	public static var easyMode:Bool = true;
 	public static var lowQuality:Bool = false;
 	public static var showFPS:Bool = true;
 

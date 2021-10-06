@@ -1,5 +1,3 @@
-// stolen from psych engine
-
 package;
 
 import Song.SwagSong;
@@ -12,7 +10,7 @@ typedef BPMChangeEvent =
 }
 
 /*
-Custom class that keeps track of the rhythm for the entire game. Copied from Psych Engine.
+Manages the rhythm for the entire game.
 */
 
 class Conductor
@@ -20,9 +18,7 @@ class Conductor
 	public static var bpm:Float = 100;
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
 	public static var songPosition:Float;
-	public static var lastSongPos:Float;
-	public static var offset:Float = 0;
-	public static var safeFrames:Int = 5;
+	public static var safeFrames:Int = 4;								// im evil.
 
 	public static var crochet:Float = ((60 / bpm) * 1000); 				// beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; 					// steps in milliseconds

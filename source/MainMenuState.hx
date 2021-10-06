@@ -38,7 +38,7 @@ class MainMenuState extends MusicBeatState
 	{
 		super.create();
 
-		FlxG.sound.music.fadeOut(1, 0.8);
+		FlxG.sound.music.fadeOut(1, 1);		// using fadeOut() to fade in. genius!
 
 		bg = new FlxSprite().loadGraphic(Paths.image('ui/menuBG'));
 		bg.screenCenter();

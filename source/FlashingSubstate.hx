@@ -6,12 +6,11 @@ import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxTimer;
 
 /*
-FlxSubstate that is shown on first launch with a flashing lights warning.
+Substate containing a flashing lights warning. Only shown once.
 */
 
 class FlashingSubstate extends MusicBeatSubstate
 {
-	var bg:FlxSprite;
 	var text:FlxSpriteGroup;
 
 	public function new(closeCallback:() -> Void)
@@ -19,11 +18,9 @@ class FlashingSubstate extends MusicBeatSubstate
 		super();
 
 		this.closeCallback = closeCallback;
-	}
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
-	override function create()
-	{
-		bg = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
+		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(bg);
 
 		text = new FlxSpriteGroup();

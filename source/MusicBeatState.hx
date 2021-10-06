@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 
 /*
-Extendable FlxState that implements basic rhythm functionality, as well as custom transitions.
+Extendable State with commonly used features.
 */
 
 class MusicBeatState extends FlxState
@@ -87,7 +87,7 @@ class MusicBeatState extends FlxState
 		}
 	}
 
-	function stepHit():Void
+	function stepHit()
 	{
 		if (curStep % 4 == 0)
 		{
@@ -95,7 +95,7 @@ class MusicBeatState extends FlxState
 		}
 	}
 
-	function beatHit():Void
+	function beatHit()
 	{
 		//do literally nothing dumbass
 	}

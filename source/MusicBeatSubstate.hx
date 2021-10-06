@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 
 /*
-Extendable FlxSubstate that implements basic rhythm functionality.
+Extendable Substate with commonly used features.
 */
 
 class MusicBeatSubstate extends FlxSubState

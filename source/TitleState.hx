@@ -6,7 +6,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxTimer;
 
 /*
-FlxState containing the intro credits sequence and the title screen.
+State containing the intro credits sequence and title screen.
 */
 
 class TitleState extends MusicBeatState
@@ -25,7 +25,7 @@ class TitleState extends MusicBeatState
 
 	override function create()
 	{
-		MusicBeatState.playTransOut = false;
+		MusicBeatState.playTransOut = false;		// no need for this fade in
 		super.create();
 
 		ClientPrefs.loadSettings('game');
@@ -61,8 +61,7 @@ class TitleState extends MusicBeatState
 		textGroup = new FlxSpriteGroup();
 		add(textGroup);
 
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
-		FlxG.sound.music.fadeOut(3, 0.6);						// using fadeOut to fade in. genius!
+		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
 		Conductor.changeBPM(102);
 	}
 

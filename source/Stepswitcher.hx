@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 using StringTools;
 
 /*
-Object class that creates a Stepswitcher character for Lockstep games.
+Creates Stepswitcher characters.
 */
 
 class Stepswitcher extends FlxSprite
@@ -40,12 +40,12 @@ class Stepswitcher extends FlxSprite
 		addOffset('singLEFTmiss', 16, -1);
 		addOffset('singRIGHTmiss', -38, -1);
 
-        playAnim('bop');
+        playAnim('idle');
 	}
 
     override function clone():Stepswitcher
 	{
-        var clone = new Stepswitcher(this.x, this.y, this.skin);
+        var clone:Stepswitcher = new Stepswitcher(this.x, this.y, this.skin);
         return clone;
 	}
 
@@ -63,7 +63,7 @@ class Stepswitcher extends FlxSprite
 	{
 		animation.play(anim, force);
 
-		var animOffset = animOffsets.get(anim);
+		var animOffset:Array<Dynamic> = animOffsets.get(anim);
         
 		if (animOffsets.exists(anim))
 		{
