@@ -20,7 +20,7 @@ class Note extends FlxSprite
 
 	public function new(strumTime:Float, direction:Int, mustHit:Bool)
 	{
-		super(-100, -100);		// spawn them off screen
+		super();
 
 		strumTime += ClientPrefs.noteOffset;
 			
@@ -34,6 +34,7 @@ class Note extends FlxSprite
 		{
 			case 0:
 				animation.play('purpleScroll');
+
 			case 1:
 				animation.play('redScroll');
 		}
@@ -42,7 +43,7 @@ class Note extends FlxSprite
 	function loadNoteAnims()
 	{
 		frames = Paths.getSparrowAtlas('gameplay/NOTE_assets');
-		antialiasing = ClientPrefs.antialiasing;
+		antialiasing = !ClientPrefs.lowQuality;
 
 		animation.addByPrefix('greenScroll', 'green0');
 		animation.addByPrefix('redScroll', 'red0');

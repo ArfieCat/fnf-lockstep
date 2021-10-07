@@ -22,7 +22,6 @@ class PauseSubstate extends MusicBeatSubstate
 		super();
 
 		this.closeCallback = closeCallback;
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		bg.alpha = 0;
@@ -35,8 +34,9 @@ class PauseSubstate extends MusicBeatSubstate
 
 		for (i in 0...OPTIONS.length)
 		{
-			var item:Alphabet = new Alphabet(0, (100 * i) + 200, OPTIONS[i]);
-			item.screenCenter(X);
+			var item:Alphabet = new Alphabet(0, 0, OPTIONS[i], 1, true, true);
+			item.screenCenter();
+			item.targetY = i;
 			menuItems.add(item);
 		}
 
@@ -51,6 +51,7 @@ class PauseSubstate extends MusicBeatSubstate
 		{
 			changeSelection(-1);
 		}
+
 		if (FlxG.keys.justPressed.DOWN)
 		{
 			changeSelection(1);
@@ -58,47 +59,55 @@ class PauseSubstate extends MusicBeatSubstate
 
 		if (FlxG.keys.justPressed.ENTER)
 		{
-			var daSelected:String = OPTIONS[curSelected];
+			var selected:String = OPTIONS[curSelected];
 
-			switch (daSelected)
+			switch (selected)
 			{
 				case 'Resume':
 					close();
-			
+
 				case 'Restart':
 					MusicBeatState.switchState(new LockstepState());
-
+					
 				case "Exit to Menu":
 					MusicBeatState.switchState(new MainMenuState());
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
 			}
+		}
+
+		if (FlxG.keys.justPressed.ESCAPE)
+		{
+			close();
 		}
 	}
 
 	function changeSelection(change:Int = 0)
 	{
-		curSelected += change;
-
 		FlxG.sound.play(Paths.sound('scrollMenu'));
+
+		curSelected += change;
 
 		if (curSelected < 0)
 		{
 			curSelected = OPTIONS.length - 1;
 		}
-		if (curSelected >= OPTIONS.length)
+		else if (curSelected >= OPTIONS.length)
 		{
 			curSelected = 0;
 		}
 		
+		var index:Int = 0;
+
 		menuItems.forEach(function(item:Alphabet)
 		{
-			if (menuItems.members.indexOf(item) == curSelected)
+			item.targetY = index - curSelected;
+			index++;
+
+			item.alpha = 0.6;
+
+			if (item.targetY == 0)
 			{
 				item.alpha = 1;
-			}
-			else
-			{
-				item.alpha = 0.6;
 			}
 		});
 	}

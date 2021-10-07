@@ -23,7 +23,6 @@ class TransitionSubstate extends MusicBeatSubstate
 
 		this.isTransIn = isTransIn;
 		this.finishCallback = finishCallback;
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		var zoom:Float = Utils.boundTo(FlxG.camera.zoom, 0.05, 1);
 		var width:Int = Std.int(FlxG.width / zoom);

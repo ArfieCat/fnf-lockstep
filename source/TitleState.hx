@@ -25,15 +25,16 @@ class TitleState extends MusicBeatState
 
 	override function create()
 	{
-		MusicBeatState.playTransOut = false;		// no need for this fade in
+		// no need for this fade in
+		MusicBeatState.playTransOut = false;
+		ClientPrefs.loadSettings();	
+		
 		super.create();
-
-		ClientPrefs.loadSettings('game');
 
 		logo = new FlxSprite(0, -80);
 		logo.frames = Paths.getSparrowAtlas('ui/logoBumpin');
 		logo.animation.addByPrefix('bump', 'logo bumpin', 24, false);
-		logo.antialiasing = ClientPrefs.antialiasing;
+		logo.antialiasing = !ClientPrefs.lowQuality;
 		logo.screenCenter(X);
 		add(logo);
 
@@ -61,7 +62,8 @@ class TitleState extends MusicBeatState
 		textGroup = new FlxSpriteGroup();
 		add(textGroup);
 
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
+		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.3);
+		FlxG.sound.music.fadeOut(3, 0.6);		// using fadeOut() to fade in. genius!
 		Conductor.changeBPM(102);
 	}
 

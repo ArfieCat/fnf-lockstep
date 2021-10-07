@@ -17,6 +17,8 @@ class MusicBeatSubstate extends FlxSubState
 	{
 		super.update(elapsed);
 
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+
 		var oldStep:Int = curStep;
 
 		if (FlxG.sound.music != null)

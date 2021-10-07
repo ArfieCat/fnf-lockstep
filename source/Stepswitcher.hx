@@ -22,7 +22,7 @@ class Stepswitcher extends FlxSprite
 		this.skin = skin;
 
         animOffsets = new Map();
-		antialiasing = ClientPrefs.antialiasing;
+		antialiasing = !ClientPrefs.lowQuality;
 
         frames = Paths.getSparrowAtlas('characters/stepswitcher' + skin);
 

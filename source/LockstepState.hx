@@ -6,7 +6,6 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -65,18 +64,18 @@ class LockstepState extends MusicBeatState
 	var notes:FlxTypedGroup<Note>;
 	var playerStrum:StrumNote;
 
+	var debugText:FlxTypedGroup<FlxText>;
 	var scoreText:FlxText;
+	var otherText:FlxText;
+
 	var youText:FlxText;
 	var perfectText:FlxSprite;
 	var fadeOut:FlxSprite;
 
-	var inputKey:FlxKey = ClientPrefs.inputKey;
-	var inputKeyAlt:FlxKey = ClientPrefs.inputKeyAlt;
-
 	// FLAGS
 	var songPlaying:Bool = false;
 	var countdownPlaying:Bool = false;
-	var canMiss:Bool = true;			// disable misses before song and during fade out
+	var canMiss:Bool = true;			// disable misses before song and during fade out. also controls pausing
 
 	override function create()
 	{
@@ -104,7 +103,7 @@ class LockstepState extends MusicBeatState
 		}
 
 		// TODO: remove this
-		SONG = Song.loadFromJson('songs/lockstep');
+		SONG = Song.loadFromJson('songs/lockstep-2');
 		
 		curSong = Utils.formatToSongPath(SONG.song);
 
@@ -193,21 +192,30 @@ class LockstepState extends MusicBeatState
 
 		// --- SETTING UP THE HUD ---
 
-		scoreText = new FlxText(10, 10);
-		scoreText.setFormat('VCR OSD Mono', 32, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
-		add(scoreText);
-
-		youText = new FlxText(camPos.x - 100, camPos.y - 230, 200, 'You');
+		youText = new FlxText(0, 120, 'You');
 		youText.setFormat('VCR OSD Mono', 64, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
 		youText.bold = true;
 		youText.borderSize = 3;
+		youText.screenCenter(X);
 		add(youText);
+
+		debugText = new FlxTypedGroup();
+		debugText.visible = false;
+		add(debugText);
+
+		scoreText = new FlxText(10, 10);
+		scoreText.setFormat('VCR OSD Mono', 32, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
+		debugText.add(scoreText);
+
+		otherText = new FlxText(10, 50);
+		otherText.setFormat('VCR OSD Mono', 16, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
+		debugText.add(otherText);
 
 		fadeOut = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		fadeOut.alpha = 0;
 		add(fadeOut);
 
-		scoreText.cameras = [camHud];
+		debugText.cameras = [camHud];
 		youText.cameras = [camHud];
 		fadeOut.cameras = [camHud];
 
@@ -297,6 +305,7 @@ class LockstepState extends MusicBeatState
 
 		new FlxTimer().start(2, function(tmr:FlxTimer)
 		{
+			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
 			MusicBeatState.switchState(new MainMenuState());
 		});
 	}
@@ -339,6 +348,7 @@ class LockstepState extends MusicBeatState
 					{
 						case 0:
 							animToPlay = 'singLEFT';
+
 						case 1:
 							animToPlay = 'singRIGHT';
 					}
@@ -370,6 +380,7 @@ class LockstepState extends MusicBeatState
 					{
 						case 0:
 							playableStepper.playAnim('singLEFTmiss', true);
+
 						case 1:
 							playableStepper.playAnim('singRIGHTmiss', true);
 					}
@@ -384,9 +395,8 @@ class LockstepState extends MusicBeatState
 			}
 		}
 
-		// update accuracy
-		var songHits:Int = songTotalNotes - songMisses;
-		songAccuracy = Utils.boundTo(songHits / songTotalNotes, 0, 1);
+		// update debug text
+		songAccuracy = Utils.boundTo((songTotalNotes - songMisses) / songTotalNotes, 0, 1);
 
 		if (songAccuracy < 1)
 		{
@@ -400,10 +410,11 @@ class LockstepState extends MusicBeatState
 			}
 		}
 
-		scoreText.text = 'Rating: ${songRating} (${Math.floor(songAccuracy * 100)}%)';
+		scoreText.text = 'Rating: ${songRating} (${Math.floor(songAccuracy * 10000) / 100}%)';
+		otherText.text = 'Current zoom level: ${camera.zoom}';
 
 		// check for specific keypresses
-		if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER)
+		if ((FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER) && canMiss)
 		{
 			FlxG.sound.pause();
 			openSubState(new PauseSubstate(function()
@@ -411,13 +422,16 @@ class LockstepState extends MusicBeatState
 				FlxG.sound.resume();
 			}));
 		}
+
+		if (FlxG.keys.justPressed.SEVEN)
+		{
+			debugText.visible = !debugText.visible;
+		}
 	}
 
 	function playerInput()
 	{
-		var controlPressed:Bool = FlxG.keys.anyJustPressed([inputKey, inputKeyAlt]);
-
-		if (controlPressed)
+		if (FlxG.keys.justPressed.SPACE)
 		{
 			// reset
 			var hittableNotes:Array<Note> = [];
@@ -454,12 +468,12 @@ class LockstepState extends MusicBeatState
 		{
 			case 0:
 				playableStepper.playAnim('singLEFT', true);
+
 			case 1:
 				playableStepper.playAnim('singRIGHT', true);
 		}
 
 		playerStrum.playAnim('confirm', true);
-
 		notes.remove(note, true).destroy();
 	}
 
@@ -505,16 +519,19 @@ class LockstepState extends MusicBeatState
 		{
 			case 8:
 				FlxG.sound.play(Paths.sound('intro3'), 0.6);
+
 			case 10: 
 				FlxG.sound.play(Paths.sound('intro2'), 0.6);
+
 			case 12:
 				FlxG.sound.play(Paths.sound('intro3'), 0.6);
+
 			case 13: 
 				FlxG.sound.play(Paths.sound('intro2'), 0.6);
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/ready'));
 				count.screenCenter();
-				count.antialiasing = ClientPrefs.antialiasing;
+				count.antialiasing = !ClientPrefs.lowQuality;
 				count.cameras = [camHud];
 				add(count);
 
@@ -530,7 +547,7 @@ class LockstepState extends MusicBeatState
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/set'));
 				count.screenCenter();
-				count.antialiasing = ClientPrefs.antialiasing;
+				count.antialiasing = !ClientPrefs.lowQuality;
 				count.cameras = [camHud];
 				add(count);
 
@@ -547,7 +564,7 @@ class LockstepState extends MusicBeatState
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/go'));
 				count.screenCenter();
-				count.antialiasing = ClientPrefs.antialiasing;
+				count.antialiasing = !ClientPrefs.lowQuality;
 				count.cameras = [camHud];
 				add(count);
 
@@ -619,7 +636,7 @@ class LockstepState extends MusicBeatState
 					camera.zoom = 1;
 
 				case 254 | 350 | 414 | 462 | 562 | 568 | 700 | 732 | 770 | 802:
-					camera.zoom = 0.8;
+					camera.zoom = 0.7;
 
 				case 384 | 480 | 560 | 566 | 704 | 736 | 774 | 806:
 					camera.zoom = 0.5;
@@ -663,7 +680,7 @@ class LockstepState extends MusicBeatState
 					camera.zoom = 1;
 
 				case 255 | 351 | 415 | 463 | 562 | 568 | 700 | 732 | 771 | 803:
-					camera.zoom = 0.8;
+					camera.zoom = 0.7;
 
 				case 384 | 480 | 560 | 566 | 704 | 736 | 775 | 807:
 					camera.zoom = 0.5;

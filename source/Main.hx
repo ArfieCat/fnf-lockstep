@@ -66,10 +66,11 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
-
+		
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 5, 0xFFFFFF);
+		fpsVar.visible = ClientPrefs.showFPS;
 		addChild(fpsVar);
 
 		FlxG.mouse.visible = false;

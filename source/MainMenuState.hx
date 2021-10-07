@@ -19,7 +19,7 @@ FlxState containing the main menu. Barely functional, will be updated!
 
 class MainMenuState extends MusicBeatState
 {
-	var OPTIONS:Array<String> = ['freeplay', 'awards', 'options'];
+	var OPTIONS:Array<String> = ['freeplay', 'options'];
 	var PLAYABLE_ITEMS:Array<String> = ['lockstep', 'lockstep-2'];
 
 	var curSelected:Int = 0;
@@ -38,8 +38,6 @@ class MainMenuState extends MusicBeatState
 	{
 		super.create();
 
-		FlxG.sound.music.fadeOut(1, 1);		// using fadeOut() to fade in. genius!
-
 		bg = new FlxSprite().loadGraphic(Paths.image('ui/menuBG'));
 		bg.screenCenter();
 		add(bg);
@@ -56,7 +54,7 @@ class MainMenuState extends MusicBeatState
 		{
 			var menuItem:FlxSprite = new FlxSprite(0, (i * 180) + 120);
 			menuItem.screenCenter(X);
-			menuItem.antialiasing = ClientPrefs.antialiasing;
+			menuItem.antialiasing = !ClientPrefs.lowQuality;
 
 			menuItem.frames = Paths.getSparrowAtlas('ui/mainmenu/menu_' + OPTIONS[i]);
 			menuItem.animation.addByPrefix('idle', OPTIONS[i] + " basic", 24);
@@ -102,16 +100,15 @@ class MainMenuState extends MusicBeatState
 							{
 								case 'freeplay':
 									MusicBeatState.switchState(new LockstepState());
-								case 'awards':
-									MusicBeatState.switchState(new MainMenuState());
+
 								case 'options':
-									MusicBeatState.switchState(new MainMenuState());
+									MusicBeatState.switchState(new OptionsMenuState());
 							}
 						});
 					}
 					else
 					{
-						FlxTween.tween(item, {alpha: 0}, 0.5, {ease: FlxEase.quadOut});
+						FlxTween.tween(item, {alpha: 0}, 0.6, {ease: FlxEase.quadOut});
 					}
 				});
 			}
