@@ -11,7 +11,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-
 using StringTools;
 
 /*
@@ -36,9 +35,10 @@ class LockstepState extends MusicBeatState
 		['Perfect', 1]
 	];
 
-	public static var SONG:SwagSong;	// set this from the menu
+	// set from menu
+	public static var SONG:SwagSong;
 
-	var curSong:String;			// formatted
+	var curSong:String;
 
 	var songTotalNotes:Int = 0;
 	var songMisses:Int = 0;
@@ -48,17 +48,16 @@ class LockstepState extends MusicBeatState
 	var camStrums:FlxCamera;	// easy mode toggle	- doesn't stay in place!
 	var camHud:FlxCamera;		// hud elements
 	var camOther:FlxCamera;		// overlays and substates
-	
-	var bg:FlxSprite;
-	var bgFlash:FlxSprite;
-	var bgStrums:FlxSprite;
 
 	var parentStepper:Stepswitcher;
 	var playableStepper:Stepswitcher;
-	var playerIndex:Int;
-
 	var bgSteppers:FlxTypedGroup<Stepswitcher>;
 	var fgSteppers:FlxTypedGroup<Stepswitcher>;
+	var playerIndex:Int;
+
+	var bg:FlxSprite;
+	var bgFlash:FlxSprite;
+	var bgStrums:FlxSprite;
 
 	var unspawnedNotes:Array<Note> = [];
 	var notes:FlxTypedGroup<Note>;
@@ -67,7 +66,6 @@ class LockstepState extends MusicBeatState
 	var debugText:FlxTypedGroup<FlxText>;
 	var scoreText:FlxText;
 	var otherText:FlxText;
-
 	var youText:FlxText;
 	var perfectText:FlxSprite;
 	var fadeOut:FlxSprite;
@@ -75,7 +73,7 @@ class LockstepState extends MusicBeatState
 	// FLAGS
 	var songPlaying:Bool = false;
 	var countdownPlaying:Bool = false;
-	var canMiss:Bool = true;			// disable misses before song and during fade out. also controls pausing
+	var canMiss:Bool = true;			// disable misses (and pausing) before countdown and during fade out.
 
 	override function create()
 	{
@@ -103,9 +101,11 @@ class LockstepState extends MusicBeatState
 		}
 
 		// TODO: remove this
-		SONG = Song.loadFromJson('songs/lockstep-2');
+		SONG = Song.loadFromJson('songs/lockstep');
 		
 		curSong = Utils.formatToSongPath(SONG.song);
+
+		// --- SETTING UP THE STAGE ---
 
 		switch (curSong)
 		{
@@ -131,6 +131,8 @@ class LockstepState extends MusicBeatState
 				bgStrums = new FlxSprite(STRUM_X - 30, 0).makeGraphic(200, FlxG.height, 0xFF009c93);
 				parentStepper = new Stepswitcher(0, 0, "-blue");
 		}
+
+		// --- ADDING THE NPCS ---
 
 		bgSteppers = new FlxTypedGroup();
 		fgSteppers = new FlxTypedGroup();
@@ -193,9 +195,9 @@ class LockstepState extends MusicBeatState
 		// --- SETTING UP THE HUD ---
 
 		youText = new FlxText(0, 120, 'You');
-		youText.setFormat('VCR OSD Mono', 64, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
 		youText.bold = true;
 		youText.borderSize = 3;
+		youText.setFormat('VCR OSD Mono', 64, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
 		youText.screenCenter(X);
 		add(youText);
 
@@ -248,6 +250,7 @@ class LockstepState extends MusicBeatState
 				var direction:Int = Std.int(songNotes[1] % 2);
 				var mustHit:Bool = true;
 
+				// the player only uses the first two columns
 				if (songNotes[1] > 1)
 				{
 					mustHit = false;
@@ -279,7 +282,7 @@ class LockstepState extends MusicBeatState
 			canMiss = true;
 
 			// fade out the 'you' indicator
-			FlxTween.tween(youText, { alpha: 0 }, Conductor.crochet / 500, { ease: FlxEase.cubeIn, 
+			FlxTween.tween(youText, { alpha: 0 }, Conductor.crochet / 500, { ease: FlxEase.circIn, 
 				onComplete: function(twn:FlxTween)
 				{
 					youText.destroy();
@@ -295,7 +298,7 @@ class LockstepState extends MusicBeatState
 		// hide the strumline
 		if (ClientPrefs.easyMode)
 		{
-			FlxTween.tween(camera, { x: 0 }, Conductor.crochet / 500, { ease: FlxEase.cubeInOut,
+			FlxTween.tween(camera, { x: 0 }, Conductor.crochet / 500, { ease: FlxEase.circInOut,
 				onComplete: function(twn:FlxTween)
 				{
 					FlxTween.tween(camStrums, { x: FlxG.width }, Conductor.crochet / 500, { ease: FlxEase.circIn });
@@ -338,12 +341,13 @@ class LockstepState extends MusicBeatState
 			notes.forEachAlive(function(note:Note)
 			{
 				note.x = STRUM_X;
-				note.y = STRUM_Y + 0.5 * (Conductor.songPosition - note.strumTime) * SONG.speed;
+				note.y = STRUM_Y + (0.5 * (Conductor.songPosition - note.strumTime) * SONG.speed);
 
 				// bot notes that were hit
 				if (!note.mustHit && note.wasGoodHit)
 				{
 					var animToPlay:String = '';
+
 					switch (note.direction)
 					{
 						case 0:
@@ -369,12 +373,12 @@ class LockstepState extends MusicBeatState
 				// player notes that weren't hit
 				if (note.mustHit && note.tooLate && !note.wasGoodHit)
 				{
+					FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
+
 					if (canMiss)
 					{
 						songMisses++;
 					}
-
-					FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
 
 					switch (note.direction)
 					{
@@ -460,9 +464,9 @@ class LockstepState extends MusicBeatState
 
 	function goodNoteHit(note:Note)
 	{
-		note.wasGoodHit = true;
-
 		FlxG.sound.play(Paths.sound('step'), 0.6);
+
+		note.wasGoodHit = true;
 
 		switch (note.direction)
 		{
@@ -479,12 +483,12 @@ class LockstepState extends MusicBeatState
 
 	function noteMiss(?note:Note)
 	{
+		FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
+
 		if (canMiss)
 		{
 			songMisses++;
 		}
-
-		FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
 		
 		var direction:Int = Std.random(2);
 
@@ -535,7 +539,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.cubeInOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -551,7 +555,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.cubeInOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -559,8 +563,8 @@ class LockstepState extends MusicBeatState
 				});
 
 			case 15:
-				countdownPlaying = false;
 				FlxG.sound.play(Paths.sound('introGo'), 0.6);
+				countdownPlaying = false;
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/go'));
 				count.screenCenter();
@@ -568,7 +572,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.cubeInOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -577,7 +581,7 @@ class LockstepState extends MusicBeatState
 			
 			case 232:
 				canMiss = false;
-				FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 1000, { ease: FlxEase.cubeOut });
+				FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 1000, { ease: FlxEase.circOut });
 		}
 
 		// intro bops
@@ -592,7 +596,7 @@ class LockstepState extends MusicBeatState
 			FlxTween.tween(camStrums, { x: 0 }, Conductor.crochet / 500, { ease: FlxEase.circOut,
 				onComplete: function(twn:FlxTween)
 				{
-					FlxTween.tween(camera, { x: -65 }, Conductor.crochet / 500, { ease: FlxEase.cubeInOut });
+					FlxTween.tween(camera, { x: -65 }, Conductor.crochet / 500, { ease: FlxEase.circInOut });
 				}
 			});
 		}
@@ -652,7 +656,7 @@ class LockstepState extends MusicBeatState
 		{
 			switch (curStep) 
 			{
-				// these are technically a half-step off but i don't want to rewrite the conductor
+				// these are technically a half-step off due to swing but i don't want to rewrite the conductor
 				case 
 				112 | 116 | 120 | 124 | 127 |			// 'hai hai hai a-ha'
 				184 | 187 | 188 | 191 | 192 |			// 'n-ha n-ha hai'

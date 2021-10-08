@@ -4,7 +4,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
-
 using StringTools;
 
 /*
@@ -15,7 +14,9 @@ class Alphabet extends FlxSpriteGroup
 {
 	var VALID_LETTERS:String = 'abcdefghijklmnopqrstuvwxyz';
 	var VALID_SYMBOLS:String = "1234567890!&'.?";
-	var ITEM_HEIGHT:Int = 100;
+
+	// set from state	
+	public var targetY:Int = 0;
 
 	var text:String;
 	var size:Float;
@@ -25,9 +26,6 @@ class Alphabet extends FlxSpriteGroup
 
 	var characterArray:Array<String> = [];
 	var letterArray:Array<AlphabetCharacter> = [];
-
-	// set from state	
-	public var targetY:Int = 0;
 
 	public function new(x:Float, y:Float, text:String = '', size:Float = 1, bold:Bool = true, isMenuItem:Bool = false)
 	{
@@ -113,8 +111,8 @@ class Alphabet extends FlxSpriteGroup
 		// scroll to menu position
 		if (isMenuItem)
 		{
-			var lerpVal:Float = Utils.boundTo(elapsed * 20, 0, 1);
-			y = FlxMath.lerp(y, (targetY * ITEM_HEIGHT) + (FlxG.height / 2) - (height / 2), lerpVal);
+			var lerpVal:Float = Utils.boundTo(elapsed * 10, 0, 1);
+			y = FlxMath.lerp(y, (targetY * 100) + (FlxG.height / 2) - (height / 2), lerpVal);
 		}	
 	}
 }
@@ -167,7 +165,6 @@ class AlphabetCharacter extends FlxSprite
 		animation.play(letter);
 		updateHitbox();
 
-		// align to bottom
 		y = 60 - height;
 
 		// reposition
@@ -198,7 +195,6 @@ class AlphabetCharacter extends FlxSprite
 		animation.play(letter);
 		updateHitbox();
 
-		// reposition
 		switch (letter)
 		{
 			case '!' | '?':

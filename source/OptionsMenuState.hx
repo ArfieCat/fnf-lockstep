@@ -2,9 +2,13 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
-
 using StringTools;
+
+/*
+State containing a simplified options menu.
+*/
 
 class OptionsMenuState extends MusicBeatState
 {
@@ -20,7 +24,6 @@ class OptionsMenuState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menuDesat'));
 		bg.screenCenter();
 		bg.antialiasing = !ClientPrefs.lowQuality;
-		bg.color = 0xFFea71fd;
 		add(bg);
 
 		menuItems = new FlxTypedGroup<Alphabet>();
@@ -64,24 +67,27 @@ class OptionsMenuState extends MusicBeatState
 					openSubState(new PreferencesSubstate());
 
 				case 'Clear Save Data':
-					ClientPrefs.resetSettings();
-
 					FlxG.sound.play(Paths.sound('cancelMenu'));
-					menuItems.members[curSelected].alpha = 0.6;
+					ClientPrefs.resetSettings();
+					FlxFlicker.flicker(menuItems.members[curSelected], 0.5, 0.05, true, true, function(flk:FlxFlicker)
+					{
+						menuItems.members[curSelected].alpha = 0.6;
+					});
 			}
 		}
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
+			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
 	}
 
 	function changeSelection(change:Int = 0)
 	{
-		curSelected += change;
-
 		FlxG.sound.play(Paths.sound('scrollMenu'));
+
+		curSelected += change;
 
 		if (curSelected < 0)
 		{
@@ -97,17 +103,21 @@ class OptionsMenuState extends MusicBeatState
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			index++;
-
 			item.alpha = 0.6;
 
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
 			}
+
+			index++;
 		});
 	}
 }
+
+/*
+Substate containing a simple diagram of the controls.
+*/
 
 class ControlsSubstate extends MusicBeatSubstate 
 {
@@ -116,7 +126,7 @@ class ControlsSubstate extends MusicBeatSubstate
 		super();
 
 		var controls:FlxSprite = new FlxSprite().makeGraphic(500, 500, 0xFF000000);
-
+		controls.screenCenter();
 		add(controls);
 	}
 
@@ -127,7 +137,6 @@ class ControlsSubstate extends MusicBeatSubstate
 		if (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-
 			close();
 		}
 	}
@@ -156,8 +165,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 	{
 		OptionsMenuState.menuItems.visible = false;
 		ClientPrefs.loadSettings();
-
-		trace(OPTIONS + ' ON SUBSTATE LOAD');
 
 		super();
 
@@ -227,7 +234,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				selected[1] ? text += 'ON' : text += 'OFF';
 
 				var newItem:Alphabet = new Alphabet(0, 0, text, 1, true, true);
-				newItem.screenCenter();
+				newItem.screenCenter(X);
+				newItem.y = item.y;
 				newItem.targetY = item.targetY;
 
 				menuItems.replace(item, newItem);
@@ -240,7 +248,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 			ClientPrefs.saveSettings();
 			OptionsMenuState.menuItems.visible = true;
-
 			close();
 		}
 	}
@@ -265,14 +272,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			index++;
-
 			item.alpha = 0.6;
 
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
 			}
+
+			index++;
 		});
 	}
 }

@@ -1,9 +1,7 @@
 package;
 
 import flixel.util.FlxSort;
-import flixel.FlxG;
 import openfl.utils.Assets;
-
 using StringTools;
 
 /*

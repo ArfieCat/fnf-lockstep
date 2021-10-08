@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.effects.FlxFlicker;
 import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxTimer;
 
@@ -20,8 +21,8 @@ class TitleState extends MusicBeatState
 	var quip:Array<String> = [];
 
 	// FLAGS
-	var finishedIntro:Bool = false;			// intro sequence finished or was skipped
-	var selectedSomething:Bool = false;		// user has pressed enter to start
+	var finishedIntro:Bool = false;
+	var selectedSomething:Bool = false;
 
 	override function create()
 	{
@@ -88,10 +89,11 @@ class TitleState extends MusicBeatState
 			}
 			else if (!selectedSomething)
 			{
-				selectedSomething = true;
-
-				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
 				FlxG.sound.play(Paths.sound('confirmMenu'));
+
+				selectedSomething = true;
+				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
+				FlxFlicker.flicker(prompt, 1.5, 0.05);
 
 				new FlxTimer().start(1.5, function(tmr:FlxTimer)
 				{

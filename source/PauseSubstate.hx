@@ -27,7 +27,7 @@ class PauseSubstate extends MusicBeatSubstate
 		bg.alpha = 0;
 		add(bg);
 
-		FlxTween.tween(bg, { alpha: 0.6 }, 0.1, { ease: FlxEase.cubeOut });
+		FlxTween.tween(bg, { alpha: 0.6 }, 0.1, { ease: FlxEase.circOut });
 
 		menuItems = new FlxTypedGroup<Alphabet>();
 		add(menuItems);
@@ -70,8 +70,8 @@ class PauseSubstate extends MusicBeatSubstate
 					MusicBeatState.switchState(new LockstepState());
 					
 				case "Exit to Menu":
-					MusicBeatState.switchState(new MainMenuState());
 					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
+					MusicBeatState.switchState(new MainMenuState());
 			}
 		}
 
@@ -101,14 +101,14 @@ class PauseSubstate extends MusicBeatSubstate
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			index++;
-
 			item.alpha = 0.6;
 
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
 			}
+			
+			index++;
 		});
 	}
 }

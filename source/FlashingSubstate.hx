@@ -12,13 +12,15 @@ Substate containing a flashing lights warning. Only shown once.
 class FlashingSubstate extends MusicBeatSubstate
 {
 	var text:FlxSpriteGroup;
+	
+	// FLAGS
+	var selectedSomething:Bool = false;
 
 	public function new(closeCallback:() -> Void)
 	{
 		super();
 
 		this.closeCallback = closeCallback;
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(bg);
@@ -43,8 +45,9 @@ class FlashingSubstate extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ENTER)
+		if (FlxG.keys.justPressed.ENTER && !selectedSomething)
 		{
+			selectedSomething = true;
 			text.visible = false;
 
 			FlxG.save.data.seenWarning = true;

@@ -3,8 +3,7 @@ package;
 import flixel.FlxG;
 
 /*
-Custom class containing user settings. Use this instead of directly accessing the save data for options
-Copied from Psych Engine and non-functional for now.
+Manages user settings. Use this instead of directly accessing save data most of the time.
 */
 
 class ClientPrefs
@@ -15,6 +14,20 @@ class ClientPrefs
 
 	public static var framerate:Int = 120;
 	public static var noteOffset:Int = 0;
+
+	public static function resetSettings()
+	{
+		FlxG.save.bind('game');
+		FlxG.save.erase();
+
+		easyMode = false;
+		lowQuality = false;
+		showFPS = false;
+		framerate = 120;
+		noteOffset = 0;
+
+		saveSettings();
+	}
 
 	public static function saveSettings()
 	{
@@ -28,8 +41,6 @@ class ClientPrefs
 		FlxG.save.data.volume = FlxG.sound.volume;
 
 		FlxG.save.flush();
-		trace('JUST SAVED ' + FlxG.save.data);
-
 		loadSettings();
 	}
 
@@ -73,19 +84,5 @@ class ClientPrefs
 		{
 			FlxG.sound.volume = FlxG.save.data.volume;
 		}
-	}
-
-	public static function resetSettings()
-	{
-		FlxG.save.bind('game');
-		FlxG.save.erase();
-
-		easyMode = false;
-		lowQuality = false;
-		showFPS = false;
-		framerate = 120;
-		noteOffset = 0;
-
-		saveSettings();
 	}
 }

@@ -2,7 +2,6 @@ package;
 
 import haxe.Json;
 import openfl.utils.Assets;
-
 using StringTools;
 
 typedef SwagSection =
@@ -54,13 +53,7 @@ class Song
 			rawJson = rawJson.substr(0, rawJson.length - 1);
 		}
 
-		var songJson:SwagSong = parseJSONshit(rawJson);
+		var songJson:SwagSong = cast Json.parse(rawJson).song;
 		return songJson;
-	}
-
-	public static function parseJSONshit(rawJson:String):SwagSong
-	{
-		var swagShit:SwagSong = cast Json.parse(rawJson).song;
-		return swagShit;
 	}
 }

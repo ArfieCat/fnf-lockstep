@@ -3,7 +3,6 @@ package;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.Assets;
 import openfl.utils.AssetType;
-
 using StringTools;
 
 /*

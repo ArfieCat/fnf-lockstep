@@ -1,7 +1,6 @@
 package;
 
 import flixel.FlxSprite;
-
 using StringTools;
 
 /*
@@ -11,7 +10,6 @@ Creates Stepswitcher characters.
 class Stepswitcher extends FlxSprite
 {    
 	var animOffsets:Map<String, Array<Dynamic>>;
-
 	var isPlayer:Bool;
 	var skin:String;
 
