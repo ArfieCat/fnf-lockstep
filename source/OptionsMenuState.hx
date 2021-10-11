@@ -116,18 +116,72 @@ class OptionsMenuState extends MusicBeatState
 }
 
 /*
-Substate containing a simple diagram of the controls.
+Substate containing a simple list of the controls.
 */
 
 class ControlsSubstate extends MusicBeatSubstate 
 {
+	var titleGroup:FlxTypedGroup<Alphabet>;
+	var keyGroup:FlxTypedGroup<Alphabet>;
+	var bindGroup:FlxTypedGroup<Alphabet>;
+
 	public function new() 
 	{
+		OptionsMenuState.menuItems.visible = false;
+
 		super();
 
-		var controls:FlxSprite = new FlxSprite().makeGraphic(500, 500, 0xFF000000);
-		controls.screenCenter();
-		add(controls);
+		titleGroup = new FlxTypedGroup();
+		add(titleGroup);
+
+		keyGroup = new FlxTypedGroup();
+		add(keyGroup);
+
+		bindGroup = new FlxTypedGroup();
+		add(bindGroup);
+
+		var menu:Alphabet = new Alphabet(0, 80, 'MENU', 1, true);
+		menu.screenCenter(X);
+		titleGroup.add(menu);
+
+		var esc:Alphabet = new Alphabet(0, 180, 'Esc', 0.8, true);
+		var enter:Alphabet = new Alphabet(0, 240, 'Enter', 0.8, true);
+		var arrows:Alphabet = new Alphabet(0, 300, 'Arrow Keys', 0.8, true);
+		keyGroup.add(esc);
+		keyGroup.add(enter);
+		keyGroup.add(arrows);
+
+		var escText:Alphabet = new Alphabet(0, 180, 'Exit', 0.8, false);
+		var enterText:Alphabet = new Alphabet(0, 240, 'Confirm', 0.8, false);
+		var arrowsText:Alphabet = new Alphabet(0, 300, 'Navigate Menu', 0.8, false);
+		bindGroup.add(escText);
+		bindGroup.add(enterText);
+		bindGroup.add(arrowsText);
+
+		var gameplay:Alphabet = new Alphabet(0, 420, 'GAMEPLAY', 1, true);
+		gameplay.screenCenter(X);
+		titleGroup.add(gameplay);
+
+		var esc2:Alphabet = new Alphabet(0, 520, 'Esc', 0.8, true);
+		var space:Alphabet = new Alphabet(0, 580, 'Space', 0.8, true);
+		keyGroup.add(esc2);
+		keyGroup.add(space);
+
+		var escText2:Alphabet = new Alphabet(0, 520, 'Pause', 0.8, false);
+		var spaceText:Alphabet = new Alphabet(0, 580, 'March!', 0.8, false);
+		bindGroup.add(escText2);
+		bindGroup.add(spaceText);
+
+		keyGroup.forEach(function(item:Alphabet)
+		{
+			item.x = 600 - item.width;
+		});
+
+		bindGroup.forEach(function(item:Alphabet)
+		{
+			item.x = 680;
+			item.y -= 10;
+		});
 	}
 
 	override function update(elapsed:Float) 
@@ -137,6 +191,7 @@ class ControlsSubstate extends MusicBeatSubstate
 		if (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.ESCAPE)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
+			OptionsMenuState.menuItems.visible = true;
 			close();
 		}
 	}

@@ -21,8 +21,8 @@ State containing the entirety of the mod's gameplay.
 
 class LockstepState extends MusicBeatState
 {
-    var POPULATION:Int = 203;
-	var PER_ROW:Int = 23;
+    var POPULATION:Int = 473;
+	var PER_ROW:Int = 32;
 	var OFFSET_X:Int = 210;
 	var OFFSET_Y:Int = 280;
 
@@ -61,9 +61,6 @@ class LockstepState extends MusicBeatState
 	var bg:FlxSprite;
 	var bgOffbeat:FlxSprite;
 	var bgStrums:FlxSprite;
-
-	var maxZoomOverlay:FlxSprite;
-	var maxZoomOverlayOffbeat:FlxSprite;
 
 	var unspawnedNotes:Array<Note> = [];
 	var notes:FlxTypedGroup<Note>;
@@ -283,7 +280,7 @@ class LockstepState extends MusicBeatState
 			FlxG.sound.playMusic(Paths.inst(curSong), 1, false);
 			FlxG.sound.music.onComplete = endSong;
 
-			bopAll();
+			playAnimAll('bop', true);
 			canMiss = true;
 
 			// fade out the 'you' indicator
@@ -362,16 +359,7 @@ class LockstepState extends MusicBeatState
 							animToPlay = 'singRIGHT';
 					}
 
-					bgSteppers.forEach(function(stepper) 
-					{
-						stepper.playAnim(animToPlay, true);
-					});
-					
-					fgSteppers.forEach(function(stepper) 
-					{
-						stepper.playAnim(animToPlay, true);
-					});
-
+					playAnimAll(animToPlay);
 					notes.remove(note, true).destroy();
 				}
 				
@@ -548,7 +536,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circInOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -557,7 +545,6 @@ class LockstepState extends MusicBeatState
 
 			case 14:
 				FlxG.sound.play(Paths.sound('intro1'), 0.6);
-				camera.zoom *= 1.1;
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/set'));
 				count.screenCenter();
@@ -565,7 +552,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circInOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -574,9 +561,7 @@ class LockstepState extends MusicBeatState
 
 			case 15:
 				countdownPlaying = false;
-				
 				FlxG.sound.play(Paths.sound('introGo'));
-				camera.zoom *= 1.1;
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/go'));
 				count.screenCenter();
@@ -584,7 +569,7 @@ class LockstepState extends MusicBeatState
 				count.cameras = [camHud];
 				add(count);
 
-				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circOut,
+				FlxTween.tween(count, { alpha: 0 }, Conductor.crochet / 1000, { ease: FlxEase.circInOut,
 					onComplete: function(twn:FlxTween)
 					{
 						count.destroy();
@@ -593,15 +578,14 @@ class LockstepState extends MusicBeatState
 			
 			case 232:
 				canMiss = false;
-
-				FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 1000, { ease: FlxEase.circOut });
 				camera.zoom *= 1.1;
+				FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 1000, { ease: FlxEase.circOut });
 		}
 
 		// intro bops
 		if (curBeat < 16 && (curBeat >= 12 || curBeat % 2 == 0)) 
 		{
-			bopAll();
+			playAnimAll('bop', true);
 		}
 
 		// show the strumlines (delayed)
@@ -722,18 +706,21 @@ class LockstepState extends MusicBeatState
 		}
 	}
 
-	function bopAll()
+	function playAnimAll(animToPlay:String, includePlayer:Bool = false)
 	{
-		playableStepper.playAnim('bop', true);
+		if (includePlayer)
+		{
+			playableStepper.playAnim(animToPlay, true);
+		}
 
 		bgSteppers.forEach(function(stepper) 
 		{
-			stepper.playAnim('bop', true);
+			stepper.playAnim(animToPlay, true);
 		});
 
 		fgSteppers.forEach(function(stepper)
 		{
-			stepper.playAnim('bop', true);
+			stepper.playAnim(animToPlay, true);
 		});
 	}
 }
