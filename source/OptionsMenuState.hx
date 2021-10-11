@@ -160,6 +160,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 	var menuItems:FlxTypedGroup<Alphabet>;
 	var curSelected:Int = 0;
+	var holdTime:Float = 0;
 
 	public function new()
 	{
@@ -207,31 +208,67 @@ class PreferencesSubstate extends MusicBeatSubstate
 			changeSelection(1);
 		}
 
-		if (FlxG.keys.justPressed.ENTER) 
+		// toggles
+		if (FlxG.keys.justPressed.ENTER && !OPTIONS[curSelected][2]) 
 		{
 			var selected:Array<Dynamic> = OPTIONS[curSelected];
 			var item:Alphabet = menuItems.members[curSelected];
 
-			if (!selected[2])
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+
+			selected[1] = !selected[1];
+
+			switch (selected[0])
+			{
+				case 'Easy Mode ':
+					ClientPrefs.easyMode = selected[1];
+
+				case 'Low Quality ':
+					ClientPrefs.lowQuality = selected[1];
+
+				case 'Show FPS ':
+					ClientPrefs.showFPS = selected[1];
+			}
+			
+			var text:String = selected[0];
+			selected[1] ? text += 'ON' : text += 'OFF';
+
+			var newItem:Alphabet = new Alphabet(0, 0, text, 1, true, true);
+			newItem.screenCenter(X);
+			newItem.y = item.y;
+			newItem.targetY = item.targetY;
+
+			menuItems.replace(item, newItem);
+		}
+
+		// sliders
+		if ((FlxG.keys.pressed.LEFT || FlxG.keys.pressed.RIGHT) && OPTIONS[curSelected][2])
+		{
+			var selected:Array<Dynamic> = OPTIONS[curSelected];
+			var item:Alphabet = menuItems.members[curSelected];
+			var add:Int = FlxG.keys.pressed.LEFT ? -1 : 1;
+
+			if (holdTime == 0) 
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
+			}
 
-				selected[1] = !selected[1];
+			if (holdTime > 0.5 || FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
+			{
+				selected[1] += add;
 
-				switch (selected[0])
+				switch (selected[0]) 
 				{
-					case 'Easy Mode ':
-						ClientPrefs.easyMode = selected[1];
-
-					case 'Low Quality ':
-						ClientPrefs.lowQuality = selected[1];
-
-					case 'Show FPS ':
-						ClientPrefs.showFPS = selected[1];
+					case 'Framerate ':
+						selected[1] = Utils.boundTo(selected[1], 60, 240);
+						ClientPrefs.framerate = selected[1];
+	
+					case 'Note Delay ':
+						selected[1] = Utils.boundTo(selected[1], 0, 500);
+						ClientPrefs.noteOffset = selected[1];
 				}
-				
-				var text:String = selected[0];
-				selected[1] ? text += 'ON' : text += 'OFF';
+
+				var text:String = selected[0] + selected[1];
 
 				var newItem:Alphabet = new Alphabet(0, 0, text, 1, true, true);
 				newItem.screenCenter(X);
@@ -240,6 +277,12 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 				menuItems.replace(item, newItem);
 			}
+
+			holdTime += elapsed;
+		} 
+		else
+		{
+			holdTime = 0;
 		}
 
 		if (FlxG.keys.justPressed.ESCAPE)

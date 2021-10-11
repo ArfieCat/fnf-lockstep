@@ -28,14 +28,7 @@ class Main extends Sprite
 	{
 		super();
 
-		if (stage != null)
-		{
-			init();
-		}
-		else
-		{
-			addEventListener(Event.ADDED_TO_STAGE, init);
-		}
+		(stage == null) ? addEventListener(Event.ADDED_TO_STAGE, init) : init();
 	}
 
 	public static function main()

@@ -25,7 +25,7 @@ class StrumNote extends FlxSprite
 		animation.addByPrefix('pressed', 'down press', 24, false);
 		animation.addByPrefix('confirm', 'down confirm', 24, false);
 
-		animation.play('static');
+		playAnim('static');
 
 		setGraphicSize(Std.int(width * 0.5));
 		updateHitbox();

@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxMath;
 import flixel.util.FlxTimer;
 
 /*
@@ -101,6 +102,10 @@ class TitleState extends MusicBeatState
 				});
 			}
 		}
+
+		// reset camera zoom 
+		var lerpVal:Float = Utils.boundTo(elapsed * 10, 0, 1);
+		camera.zoom = FlxMath.lerp(camera.zoom, 1, lerpVal);
 	}
 
     override function beatHit()
@@ -113,34 +118,57 @@ class TitleState extends MusicBeatState
 		{
 			switch (curBeat)
 			{
+				case 4 | 8 | 12:
+					textGroup.clear();
+
 				case 1:
+					camera.zoom += 0.05;
 					addText('ArfieCat', 30);
+
 				case 3:
+					camera.zoom += 0.05;
 					addText('Presents', 30);
-				case 4:
-					textGroup.clear();
+
 				case 5:
+					camera.zoom += 0.05;
 					addText('Wait', 30);
+
 				case 7:
+					camera.zoom += 0.05;
 					addText('Is this even FNF anymore?', 30);
-				case 8:
-					textGroup.clear();
+
 				case 9:
+					camera.zoom += 0.05;
 					if (quip[1] != '')
+					{
 						addText(quip[0], 30);
+					}
 					else
+					{
 						addText(quip[0], 60);
+					}
+
 				case 11:
-					addText(quip[1], 30);
-				case 12:
-					textGroup.clear();
+					if (quip[1] != '')
+					{
+						camera.zoom += 0.05;
+						addText(quip[1], 30);
+					}
+
 				case 13:
+					camera.zoom += 0.05;
 					addText('Friday');
+
 				case 14:
+					camera.zoom += 0.05;
 					addText('Night');
+
 				case 15:
+					camera.zoom += 0.05;
 					addText('Funkin\'?');
+
 				case 16:
+					textGroup.clear();
 					skipIntro();
 			}
 		}

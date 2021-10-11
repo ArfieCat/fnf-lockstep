@@ -6,11 +6,13 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
+using flixel.util.FlxSpriteUtil;
 using StringTools;
 
 /*
@@ -48,6 +50,7 @@ class LockstepState extends MusicBeatState
 	var camStrums:FlxCamera;	// easy mode toggle	- doesn't stay in place!
 	var camHud:FlxCamera;		// hud elements
 	var camOther:FlxCamera;		// overlays and substates
+	var camDefaultZoom:Float = 1;
 
 	var parentStepper:Stepswitcher;
 	var playableStepper:Stepswitcher;
@@ -56,8 +59,11 @@ class LockstepState extends MusicBeatState
 	var playerIndex:Int;
 
 	var bg:FlxSprite;
-	var bgFlash:FlxSprite;
+	var bgOffbeat:FlxSprite;
 	var bgStrums:FlxSprite;
+
+	var maxZoomOverlay:FlxSprite;
+	var maxZoomOverlayOffbeat:FlxSprite;
 
 	var unspawnedNotes:Array<Note> = [];
 	var notes:FlxTypedGroup<Note>;
@@ -113,10 +119,11 @@ class LockstepState extends MusicBeatState
 				bg = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFFff609c);
 				add(bg);
 
-				bgFlash = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFFfb6da6);
-				bgFlash.visible = false;
-				add(bgFlash);
+				bgOffbeat = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFFfb6da6);
+				bgOffbeat.visible = false;
+				add(bgOffbeat);
 
+				// stage unique stuff that will be added later
 				bgStrums = new FlxSprite(STRUM_X - 25, 0).makeGraphic(200, FlxG.height, 0xFFe71b75);
 				parentStepper = new Stepswitcher(0, 0);
 
@@ -124,9 +131,9 @@ class LockstepState extends MusicBeatState
 				bg = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFF30ade6);
 				add(bg);
 
-				bgFlash = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFF1194cf);
-				bgFlash.visible = false;
-				add(bgFlash);
+				bgOffbeat = new FlxSprite().makeGraphic(FlxG.width * 5, FlxG.height * 5, 0xFF1194cf);
+				bgOffbeat.visible = false;
+				add(bgOffbeat);
 
 				bgStrums = new FlxSprite(STRUM_X - 30, 0).makeGraphic(200, FlxG.height, 0xFF009c93);
 				parentStepper = new Stepswitcher(0, 0, "-blue");
@@ -188,17 +195,16 @@ class LockstepState extends MusicBeatState
 		var camPos:FlxPoint = new FlxPoint(playableStepper.getGraphicMidpoint().x, playableStepper.getGraphicMidpoint().y);
 		camera.focusOn(camPos);
 
-		// screenCenter() dies when the camera isn't focused on (0, 0) apparently
+		// screenCenter() dies when the camera isn't focused on (0, 0) apparently, thanks flixel
 		bg.setPosition(camPos.x - (bg.width / 2), camPos.y - (bg.height / 2));
-		bgFlash.setPosition(camPos.x - (bgFlash.width / 2), camPos.y - (bgFlash.height / 2));
+		bgOffbeat.setPosition(camPos.x - (bgOffbeat.width / 2), camPos.y - (bgOffbeat.height / 2));
 
 		// --- SETTING UP THE HUD ---
 
-		youText = new FlxText(0, 120, 'You');
+		youText = new FlxText(camPos.x - 100, camPos.y - 225, 200, 'You');
+		youText.setFormat('VCR OSD Mono', 64, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
 		youText.bold = true;
 		youText.borderSize = 3;
-		youText.setFormat('VCR OSD Mono', 64, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
-		youText.screenCenter(X);
 		add(youText);
 
 		debugText = new FlxTypedGroup();
@@ -218,7 +224,6 @@ class LockstepState extends MusicBeatState
 		add(fadeOut);
 
 		debugText.cameras = [camHud];
-		youText.cameras = [camHud];
 		fadeOut.cameras = [camHud];
 
 		// strums and notes on a separate camera
@@ -278,7 +283,7 @@ class LockstepState extends MusicBeatState
 			FlxG.sound.playMusic(Paths.inst(curSong), 1, false);
 			FlxG.sound.music.onComplete = endSong;
 
-			bop();
+			bopAll();
 			canMiss = true;
 
 			// fade out the 'you' indicator
@@ -398,6 +403,10 @@ class LockstepState extends MusicBeatState
 				playerInput();
 			}
 		}
+
+		// reset camera zoom 
+		var lerpVal:Float = Utils.boundTo(elapsed * 20, 0, 1);
+		camera.zoom = FlxMath.lerp(camera.zoom, camDefaultZoom, lerpVal);
 
 		// update debug text
 		songAccuracy = Utils.boundTo((songTotalNotes - songMisses) / songTotalNotes, 0, 1);
@@ -548,6 +557,7 @@ class LockstepState extends MusicBeatState
 
 			case 14:
 				FlxG.sound.play(Paths.sound('intro1'), 0.6);
+				camera.zoom *= 1.1;
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/set'));
 				count.screenCenter();
@@ -563,8 +573,10 @@ class LockstepState extends MusicBeatState
 				});
 
 			case 15:
-				FlxG.sound.play(Paths.sound('introGo'), 0.6);
 				countdownPlaying = false;
+				
+				FlxG.sound.play(Paths.sound('introGo'));
+				camera.zoom *= 1.1;
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/go'));
 				count.screenCenter();
@@ -581,13 +593,15 @@ class LockstepState extends MusicBeatState
 			
 			case 232:
 				canMiss = false;
+
 				FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 1000, { ease: FlxEase.circOut });
+				camera.zoom *= 1.1;
 		}
 
 		// intro bops
 		if (curBeat < 16 && (curBeat >= 12 || curBeat % 2 == 0)) 
 		{
-			bop();
+			bopAll();
 		}
 
 		// show the strumlines (delayed)
@@ -629,27 +643,32 @@ class LockstepState extends MusicBeatState
 				656 | 660 | 664 | 668 | 670 |
 				688 | 690 | 692 | 694 | 696 |
 				752 | 756 | 760 | 764 | 766 |
-				824 | 826 | 828 | 830 | 832	:
-					bgFlash.visible = !bgFlash.visible;
+				824 | 826 | 828 | 830 | 832:
+					bgOffbeat.visible = !bgOffbeat.visible;
+					
+					if (camera.zoom - camDefaultZoom < camera.zoom * 0.02)
+					{
+						camera.zoom *= 1.1;
+					}
 			}
 
 			switch (curStep) 
 			{
 				// NOOOOOOOOOOOO
 				case 320 | 448 | 564 | 570 | 632 | 696 | 766 | 798:
-					camera.zoom = 1;
+					camDefaultZoom = 1;
 
 				case 254 | 350 | 414 | 462 | 562 | 568 | 700 | 732 | 770 | 802:
-					camera.zoom = 0.7;
+					camDefaultZoom = 0.7;
 
 				case 384 | 480 | 560 | 566 | 704 | 736 | 774 | 806:
-					camera.zoom = 0.5;
+					camDefaultZoom = 0.5;
 
 				case 494 | 526 | 572 | 640 | 708 | 740 | 778 | 810:
-					camera.zoom = 0.3;
+					camDefaultZoom = 0.3;
 
 				case 552 | 606 | 670 | 712 | 744 | 782 | 814:
-					camera.zoom = 0.2;
+					camDefaultZoom = 0.2;
 			}
 		}
 		else if (curSong == 'lockstep-2')
@@ -674,33 +693,38 @@ class LockstepState extends MusicBeatState
 				656 | 660 | 664 | 668 | 671 |
 				688 | 691 | 692 | 695 | 696 |
 				752 | 756 | 760 | 764 | 767 |
-				824 | 827 | 828 | 831 | 832	:
-					bgFlash.visible = !bgFlash.visible;
+				824 | 827 | 828 | 831 | 832:
+					bgOffbeat.visible = !bgOffbeat.visible;
+
+					if (camera.zoom - camDefaultZoom < camera.zoom * 0.02)
+					{
+						camera.zoom *= 1.1;
+					}
 			}
 
 			switch (curStep) 
 			{
 				case 320 | 448 | 564 | 570 | 632 | 696 | 767 | 799:
-					camera.zoom = 1;
+					camDefaultZoom = 1;
 
 				case 255 | 351 | 415 | 463 | 562 | 568 | 700 | 732 | 771 | 803:
-					camera.zoom = 0.7;
+					camDefaultZoom = 0.7;
 
 				case 384 | 480 | 560 | 566 | 704 | 736 | 775 | 807:
-					camera.zoom = 0.5;
+					camDefaultZoom = 0.5;
 
 				case 495 | 527 | 572 | 640 | 708 | 740 | 779 | 811:
-					camera.zoom = 0.3;
+					camDefaultZoom = 0.3;
 
 				case 552 | 607 | 671 | 712 | 744 | 783 | 815:
-					camera.zoom = 0.2;
+					camDefaultZoom = 0.2;
 			}
 		}
 	}
 
-	function bop()
+	function bopAll()
 	{
-		playableStepper.playAnim('bop');
+		playableStepper.playAnim('bop', true);
 
 		bgSteppers.forEach(function(stepper) 
 		{

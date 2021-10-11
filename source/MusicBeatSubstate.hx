@@ -13,11 +13,16 @@ class MusicBeatSubstate extends FlxSubState
 	var curStep:Int = 0;
 	var curBeat:Int = 0;
 
+	public function new()
+	{
+		super();
+
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
 		var oldStep:Int = curStep;
 

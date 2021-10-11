@@ -63,14 +63,7 @@ class Stepswitcher extends FlxSprite
 
 		var animOffset:Array<Dynamic> = animOffsets.get(anim);
         
-		if (animOffsets.exists(anim))
-		{
-			offset.set(animOffset[0], animOffset[1]);
-		}
-		else
-		{
-            offset.set(0, 0);
-        }
+		(animOffsets.exists(anim)) ? offset.set(animOffset[0], animOffset[1]) : offset.set(0, 0);
 	}
 
 	function addOffset(name:String, x:Float = 0, y:Float = 0)

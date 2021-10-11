@@ -76,25 +76,11 @@ class Alphabet extends FlxSpriteGroup
 
 				if (bold)
 				{
-					if (validLetter)
-					{
-						letter.createBoldLetter(character);
-					}
-					else
-					{
-						letter.createBoldSymbol(character);
-					}
+					validLetter ? letter.createBoldLetter(character) : letter.createBoldSymbol(character);
 				}
 				else
 				{
-					if (validLetter)
-					{
-						letter.createLetter(character);
-					}
-					else
-					{
-						letter.createSymbol(character);
-					}
+					validLetter ? letter.createLetter(character) : letter.createSymbol(character);
 				}
 				
 				add(letter);
@@ -140,11 +126,7 @@ class AlphabetCharacter extends FlxSprite
 
 	public function createLetter(letter:String)
 	{
-		var letterCase:String = "lowercase";
-		if (letter.toLowerCase() != letter)
-		{
-			letterCase = 'capital';
-		}
+		var letterCase:String = (letter.toLowerCase() == letter) ? 'lowercase' : 'capital';
 
 		animation.addByPrefix(letter, letter + " " + letterCase, 24);
 		animation.play(letter);

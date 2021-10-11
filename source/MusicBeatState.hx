@@ -20,14 +20,7 @@ class MusicBeatState extends FlxState
 	{
 		super.create();
 
-		if (playTransOut)
-		{
-			openSubState(new TransitionSubstate(1, true));
-		}
-		else
-		{
-			playTransOut = !playTransOut;
-		}
+		playTransOut ? openSubState(new TransitionSubstate(1, true)) : playTransOut = true;
 	}
 
 	override function update(elapsed:Float)
@@ -82,7 +75,7 @@ class MusicBeatState extends FlxState
 		}
 		else
 		{
-			playTransIn = !playTransIn;
+			playTransIn = true;
 			FlxG.switchState(nextState);
 		}
 	}
