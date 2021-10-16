@@ -310,8 +310,11 @@ class LockstepState extends MusicBeatState
 
 		new FlxTimer().start(2, function(tmr:FlxTimer)
 		{
-			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
-			MusicBeatState.switchState(new MainMenuState());
+			openSubState(new ResultsSubstate(songRating, function()
+			{
+				FlxG.sound.playMusic(Paths.music('menu'), 0.6);
+				MusicBeatState.switchState(new MainMenuState());
+			}));
 		});
 	}
 
@@ -366,20 +369,24 @@ class LockstepState extends MusicBeatState
 				// player notes that weren't hit
 				if (note.mustHit && note.tooLate && !note.wasGoodHit)
 				{
-					FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
+					FlxG.sound.play(Paths.soundRandom('miss-note-', 3), 0.3);
 
 					if (canMiss)
 					{
 						songMisses++;
 					}
 
-					switch (note.direction)
+					// don't play the miss anim if he's mid-step or it looks weird
+					if (playableStepper.animation.curAnim.name == 'idle' || !playableStepper.animation.curAnim.name.startsWith('sing'))
 					{
-						case 0:
-							playableStepper.playAnim('singLEFTmiss', true);
+						switch (note.direction)
+						{
+							case 0:
+								playableStepper.playAnim('singLEFTmiss', true);
 
-						case 1:
-							playableStepper.playAnim('singRIGHTmiss', true);
+							case 1:
+								playableStepper.playAnim('singRIGHTmiss', true);
+						}
 					}
 
 					notes.remove(note, true).destroy();
@@ -480,7 +487,7 @@ class LockstepState extends MusicBeatState
 
 	function noteMiss(?note:Note)
 	{
-		FlxG.sound.play(Paths.soundRandom('missnote', 3), 0.3);
+		FlxG.sound.play(Paths.soundRandom('miss-note-', 3), 0.3);
 
 		if (canMiss)
 		{
@@ -519,16 +526,16 @@ class LockstepState extends MusicBeatState
 		switch (curBeat)
 		{
 			case 8:
-				FlxG.sound.play(Paths.sound('intro3'), 0.6);
+				FlxG.sound.play(Paths.sound('intro-3'), 0.6);
 
 			case 10: 
-				FlxG.sound.play(Paths.sound('intro2'), 0.6);
+				FlxG.sound.play(Paths.sound('intro-2'), 0.6);
 
 			case 12:
-				FlxG.sound.play(Paths.sound('intro3'), 0.6);
+				FlxG.sound.play(Paths.sound('intro-3'), 0.6);
 
 			case 13: 
-				FlxG.sound.play(Paths.sound('intro2'), 0.6);
+				FlxG.sound.play(Paths.sound('intro-2'), 0.6);
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/ready'));
 				count.screenCenter();
@@ -544,7 +551,7 @@ class LockstepState extends MusicBeatState
 				});
 
 			case 14:
-				FlxG.sound.play(Paths.sound('intro1'), 0.6);
+				FlxG.sound.play(Paths.sound('intro-1'), 0.6);
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/set'));
 				count.screenCenter();
@@ -561,7 +568,7 @@ class LockstepState extends MusicBeatState
 
 			case 15:
 				countdownPlaying = false;
-				FlxG.sound.play(Paths.sound('introGo'));
+				FlxG.sound.play(Paths.sound('intro-go'));
 
 				var count:FlxSprite = new FlxSprite().loadGraphic(Paths.image('gameplay/go'));
 				count.screenCenter();

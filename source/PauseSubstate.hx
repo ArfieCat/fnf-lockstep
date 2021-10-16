@@ -70,7 +70,7 @@ class PauseSubstate extends MusicBeatSubstate
 					MusicBeatState.switchState(new LockstepState());
 					
 				case "Exit to Menu":
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.6);
+					FlxG.sound.playMusic(Paths.music('menu'), 0.6);
 					MusicBeatState.switchState(new MainMenuState());
 			}
 		}
@@ -83,7 +83,7 @@ class PauseSubstate extends MusicBeatSubstate
 
 	function changeSelection(change:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('menu-scroll'));
 
 		curSelected += change;
 

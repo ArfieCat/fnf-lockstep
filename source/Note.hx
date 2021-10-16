@@ -27,27 +27,16 @@ class Note extends FlxSprite
 		this.direction = direction;
 		this.mustHit = mustHit;
 
-		loadNoteAnims();
-
-		switch (direction % 2)
-		{
-			case 0:
-				animation.play('purpleScroll');
-
-			case 1:
-				animation.play('redScroll');
-		}
+		loadNoteAnims();	
 	}
 
 	function loadNoteAnims()
 	{
-		frames = Paths.getSparrowAtlas('gameplay/NOTE_assets');
+		frames = Paths.getSparrowAtlas('gameplay/note-assets');
 		antialiasing = !ClientPrefs.lowQuality;
 
-		animation.addByPrefix('greenScroll', 'green0');
-		animation.addByPrefix('redScroll', 'red0');
-		animation.addByPrefix('blueScroll', 'blue0');
-		animation.addByPrefix('purpleScroll', 'purple0');
+		animation.addByPrefix('idle', 'note', 0);
+		animation.play('idle');
 
 		setGraphicSize(Std.int(width * 0.5));
 		updateHitbox();

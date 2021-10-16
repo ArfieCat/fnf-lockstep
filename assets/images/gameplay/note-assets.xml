@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="note-assets.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="note maxres0000" x="0" y="0" width="153" height="150"/>
+	<SubTexture name="hit maxres0000" x="155" y="0" width="227" height="224"/>
+	<SubTexture name="hit maxres0001" x="0" y="226" width="227" height="224"/>
+	<SubTexture name="hit maxres0002" x="229" y="226" width="206" height="204" frameX="-10" frameY="-10" frameWidth="227" frameHeight="224"/>
+	<SubTexture name="hit maxres0003" x="229" y="226" width="206" height="204" frameX="-10" frameY="-10" frameWidth="227" frameHeight="224"/>
+	<SubTexture name="idle maxres0000" x="0" y="452" width="153" height="150"/>
+	<SubTexture name="pressed maxres0000" x="155" y="452" width="133" height="130" frameX="-5" frameY="-5" frameWidth="143" frameHeight="140"/>
+	<SubTexture name="pressed maxres0001" x="155" y="452" width="133" height="130" frameX="-5" frameY="-5" frameWidth="143" frameHeight="140"/>
+	<SubTexture name="pressed maxres0002" x="290" y="452" width="143" height="140"/>
+	<SubTexture name="pressed maxres0003" x="290" y="452" width="143" height="140"/>
+</TextureAtlas>

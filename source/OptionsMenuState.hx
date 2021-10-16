@@ -21,7 +21,7 @@ class OptionsMenuState extends MusicBeatState
 	{
 		super.create();
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menuDesat'));
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg-desat'));
 		bg.screenCenter();
 		bg.antialiasing = !ClientPrefs.lowQuality;
 		add(bg);
@@ -67,7 +67,7 @@ class OptionsMenuState extends MusicBeatState
 					openSubState(new PreferencesSubstate());
 
 				case 'Clear Save Data':
-					FlxG.sound.play(Paths.sound('cancelMenu'));
+					FlxG.sound.play(Paths.sound('menu-cancel'));
 					ClientPrefs.resetSettings();
 					FlxFlicker.flicker(menuItems.members[curSelected], 0.5, 0.05, true, true, function(flk:FlxFlicker)
 					{
@@ -78,14 +78,14 @@ class OptionsMenuState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('menu-cancel'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
 	}
 
 	function changeSelection(change:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('menu-scroll'));
 
 		curSelected += change;
 
@@ -190,7 +190,7 @@ class ControlsSubstate extends MusicBeatSubstate
 
 		if (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('menu-cancel'));
 			OptionsMenuState.menuItems.visible = true;
 			close();
 		}
@@ -269,7 +269,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 			var selected:Array<Dynamic> = OPTIONS[curSelected];
 			var item:Alphabet = menuItems.members[curSelected];
 
-			FlxG.sound.play(Paths.sound('scrollMenu'));
+			FlxG.sound.play(Paths.sound('menu-scroll'));
 
 			selected[1] = !selected[1];
 
@@ -305,7 +305,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 			if (holdTime == 0) 
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('menu-scroll'));
 			}
 
 			if (holdTime > 0.5 || FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
@@ -342,7 +342,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.sound.play(Paths.sound('cancelMenu'));
+			FlxG.sound.play(Paths.sound('menu-cancel'));
 
 			ClientPrefs.saveSettings();
 			OptionsMenuState.menuItems.visible = true;
@@ -352,7 +352,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 	function changeSelection(change:Int = 0)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('menu-scroll'));
 
 		curSelected += change;
 

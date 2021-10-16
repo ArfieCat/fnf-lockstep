@@ -148,13 +148,6 @@ class AlphabetCharacter extends FlxSprite
 		updateHitbox();
 
 		y = 60 - height;
-
-		// reposition
-		switch (letter)		
-		{
-			case 'apostrophe':
-				y -= 20;
-		}
 	}
 
 	public function createBoldLetter(letter:String)
@@ -183,7 +176,7 @@ class AlphabetCharacter extends FlxSprite
 				y -= 10 * size;
 
 			case '.':
-				y += 40 * size;
+				y += 50 * size;
 		}
 	}
 }

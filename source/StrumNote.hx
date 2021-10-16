@@ -18,12 +18,12 @@ class StrumNote extends FlxSprite
 
 	function loadStrumNoteAnims()
 	{
-		frames = Paths.getSparrowAtlas('gameplay/NOTE_assets');
+		frames = Paths.getSparrowAtlas('gameplay/note-assets');
 		antialiasing = !ClientPrefs.lowQuality;
 
-		animation.addByPrefix('static', 'arrowDOWN', 0, true);
-		animation.addByPrefix('pressed', 'down press', 24, false);
-		animation.addByPrefix('confirm', 'down confirm', 24, false);
+		animation.addByPrefix('static', 'idle', 0, true);
+		animation.addByPrefix('pressed', 'pressed', 24, false);
+		animation.addByPrefix('confirm', 'hit', 24, false);
 
 		playAnim('static');
 

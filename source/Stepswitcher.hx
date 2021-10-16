@@ -24,7 +24,7 @@ class Stepswitcher extends FlxSprite
 
         frames = Paths.getSparrowAtlas('characters/stepswitcher' + skin);
 
-        animation.addByPrefix('idle', 'stepswitcher idle', 30, true);
+        animation.addByPrefix('idle', 'stepswitcher idle', 0, true);
 		animation.addByPrefix('bop', 'stepswitcher bop', 30, false);
 
         animation.addByPrefix('singLEFT', 'stepswitcher left', 30, false);

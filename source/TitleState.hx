@@ -3,7 +3,7 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
-import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.util.FlxTimer;
 
@@ -17,7 +17,7 @@ class TitleState extends MusicBeatState
 	var prompt:Alphabet;
 
 	var black:FlxSprite;
-	var textGroup:FlxSpriteGroup;
+	var textGroup:FlxTypedGroup<Alphabet>;
 	
 	var quip:Array<String> = [];
 
@@ -61,10 +61,10 @@ class TitleState extends MusicBeatState
 		black = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
 		add(black);
 
-		textGroup = new FlxSpriteGroup();
+		textGroup = new FlxTypedGroup();
 		add(textGroup);
 
-		FlxG.sound.playMusic(Paths.music('freakyMenu'), 0.3);
+		FlxG.sound.playMusic(Paths.music('menu'), 0.3);
 		FlxG.sound.music.fadeOut(3, 0.6);		// using fadeOut() to fade in. genius!
 		Conductor.changeBPM(102);
 	}
@@ -90,13 +90,13 @@ class TitleState extends MusicBeatState
 			}
 			else if (!selectedSomething)
 			{
-				FlxG.sound.play(Paths.sound('confirmMenu'));
+				FlxG.sound.play(Paths.sound('menu-confirm'));
 
 				selectedSomething = true;
 				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
 				FlxFlicker.flicker(prompt, 1.5, 0.05);
 
-				new FlxTimer().start(1.5, function(tmr:FlxTimer)
+				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
 					MusicBeatState.switchState(new MainMenuState());
 				});
@@ -119,7 +119,7 @@ class TitleState extends MusicBeatState
 			switch (curBeat)
 			{
 				case 4 | 8 | 12:
-					textGroup.clear();
+					clearText();
 
 				case 1:
 					camera.zoom += 0.05;
@@ -168,7 +168,7 @@ class TitleState extends MusicBeatState
 					addText('Funkin\'?');
 
 				case 16:
-					textGroup.clear();
+					clearText();
 					skipIntro();
 			}
 		}
@@ -181,6 +181,14 @@ class TitleState extends MusicBeatState
 		newText.y += textGroup.length * 60 + 240 + offset;
 		
 		textGroup.add(newText);
+	}
+
+	function clearText()
+	{
+		while (textGroup.length > 0)
+		{
+			textGroup.remove(textGroup.members[0], true).destroy();
+		}
 	}
 
 	function getRandomQuip():Array<String>

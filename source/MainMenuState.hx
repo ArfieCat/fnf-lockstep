@@ -38,11 +38,11 @@ class MainMenuState extends MusicBeatState
 	{
 		super.create();
 
-		bg = new FlxSprite().loadGraphic(Paths.image('ui/menuBG'));
+		bg = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg'));
 		bg.screenCenter();
 		add(bg);
 
-		magenta = new FlxSprite().loadGraphic(Paths.image('ui/menuBGMagenta'));
+		magenta = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg-magenta'));
 		magenta.screenCenter();
 		magenta.visible = false;
 		add(magenta);
@@ -87,7 +87,7 @@ class MainMenuState extends MusicBeatState
 			{
 				selectedSomething = true;
 
-				FlxG.sound.play(Paths.sound('confirmMenu'));
+				FlxG.sound.play(Paths.sound('menu-confirm'));
 				FlxFlicker.flicker(magenta, 1, 0.15, false);
 
 				menuItems.forEach(function(item:FlxSprite)
@@ -122,7 +122,7 @@ class MainMenuState extends MusicBeatState
 
 	function changeSelection(selected:Int)
 	{
-		FlxG.sound.play(Paths.sound('scrollMenu'));
+		FlxG.sound.play(Paths.sound('menu-scroll'));
 
 		if (curSelected >= menuItems.length)
 		{
