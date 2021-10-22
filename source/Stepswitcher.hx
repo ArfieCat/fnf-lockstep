@@ -22,7 +22,7 @@ class Stepswitcher extends FlxSprite
         animOffsets = new Map();
 		antialiasing = !ClientPrefs.lowQuality;
 
-        frames = Paths.getSparrowAtlas('characters/stepswitcher' + skin);
+        frames = Paths.getSparrowAtlas('characters/stepswitcher${skin}');
 
         animation.addByPrefix('idle', 'stepswitcher idle', 0, true);
 		animation.addByPrefix('bop', 'stepswitcher bop', 30, false);

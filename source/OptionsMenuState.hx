@@ -69,7 +69,7 @@ class OptionsMenuState extends MusicBeatState
 				case 'Clear Save Data':
 					FlxG.sound.play(Paths.sound('menu-cancel'));
 					ClientPrefs.resetSettings();
-					FlxFlicker.flicker(menuItems.members[curSelected], 0.5, 0.05, true, true, function(flk:FlxFlicker)
+					FlxFlicker.flicker(menuItems.members[curSelected], 0.6, 0.05, true, true, function(flk:FlxFlicker)
 					{
 						menuItems.members[curSelected].alpha = 0.6;
 					});
@@ -103,11 +103,14 @@ class OptionsMenuState extends MusicBeatState
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			item.alpha = 0.6;
-
+			
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
+			}
+			else
+			{
+				item.alpha = 0.6;
 			}
 
 			index++;
@@ -370,11 +373,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			item.alpha = 0.6;
 
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
+			}
+			else
+			{
+				item.alpha = 0.6;
 			}
 
 			index++;

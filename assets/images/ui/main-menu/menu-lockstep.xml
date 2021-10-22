@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="menu-lockstep.png">
+	<!-- Created with Adobe Animate version 19.2.1.408 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="lockstep basic0000" x="0" y="0" width="528" height="115"/>
+	<SubTexture name="lockstep basic0001" x="0" y="0" width="528" height="115"/>
+	<SubTexture name="lockstep basic0002" x="0" y="0" width="528" height="115"/>
+	<SubTexture name="lockstep basic0003" x="0" y="117" width="528" height="115"/>
+	<SubTexture name="lockstep basic0004" x="0" y="117" width="528" height="115"/>
+	<SubTexture name="lockstep basic0005" x="0" y="117" width="528" height="115"/>
+	<SubTexture name="lockstep basic0006" x="0" y="234" width="528" height="115"/>
+	<SubTexture name="lockstep basic0007" x="0" y="234" width="528" height="115"/>
+	<SubTexture name="lockstep basic0008" x="0" y="234" width="528" height="115"/>
+	<SubTexture name="lockstep white0000" x="0" y="351" width="632" height="165" frameX="0" frameY="-2" frameWidth="632" frameHeight="167"/>
+	<SubTexture name="lockstep white0001" x="0" y="518" width="631" height="163" frameX="-1" frameY="-3" frameWidth="632" frameHeight="167"/>
+	<SubTexture name="lockstep white0002" x="0" y="683" width="630" height="165" frameX="-2" frameY="0" frameWidth="632" frameHeight="167"/>
+</TextureAtlas>

@@ -101,11 +101,14 @@ class PauseSubstate extends MusicBeatSubstate
 		menuItems.forEach(function(item:Alphabet)
 		{
 			item.targetY = index - curSelected;
-			item.alpha = 0.6;
-
+			
 			if (item.targetY == 0)
 			{
 				item.alpha = 1;
+			}
+			else
+			{
+				item.alpha = 0.6;
 			}
 			
 			index++;

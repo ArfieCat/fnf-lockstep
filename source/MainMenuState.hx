@@ -1,34 +1,31 @@
 package;
 
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.effects.FlxFlicker;
-import flixel.group.FlxSpriteGroup;
-import flixel.FlxCamera;
-import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
-import flixel.group.FlxGroup;
+import flixel.effects.FlxFlicker;
+import flixel.group.FlxSpriteGroup;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 
 using StringTools;
 
 /*
-FlxState containing the main menu. Barely functional, will be updated!
+State containing the main menu.
 */
 
 class MainMenuState extends MusicBeatState
 {
-	var OPTIONS:Array<String> = ['freeplay', 'options'];
-	var PLAYABLE_ITEMS:Array<String> = ['lockstep', 'lockstep-2'];
+	var OPTIONS:Array<Dynamic> = 
+	[
+		// name, menu bg suffix
+		['lockstep', '-pink'],
+		['lockstep-2', '-blue'],
+		['options', '']
+	];
 
 	var curSelected:Int = 0;
 
-	var camSelect:FlxCamera;
-	var camUI:FlxCamera;
-
-	var bg:FlxSprite;
-	var magenta:FlxSprite;
+	var bgs:FlxSpriteGroup;
 	var menuItems:FlxSpriteGroup;
 
 	// FLAGS
@@ -38,33 +35,34 @@ class MainMenuState extends MusicBeatState
 	{
 		super.create();
 
-		bg = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg'));
-		bg.screenCenter();
-		add(bg);
-
-		magenta = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg-magenta'));
-		magenta.screenCenter();
-		magenta.visible = false;
-		add(magenta);
+		bgs = new FlxSpriteGroup();
+		add(bgs);
 
 		menuItems = new FlxSpriteGroup();
 		add(menuItems);
 
 		for (i in 0...OPTIONS.length)
 		{
+			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('ui/menu-bg${OPTIONS[i][1]}'));
+			bg.screenCenter();
+			bg.alpha = 0;
+			bg.antialiasing = !ClientPrefs.lowQuality;
+
 			var menuItem:FlxSprite = new FlxSprite(0, (i * 180) + 120);
 			menuItem.screenCenter(X);
 			menuItem.antialiasing = !ClientPrefs.lowQuality;
 
-			menuItem.frames = Paths.getSparrowAtlas('ui/mainmenu/menu_' + OPTIONS[i]);
-			menuItem.animation.addByPrefix('idle', OPTIONS[i] + " basic", 24);
-			menuItem.animation.addByPrefix('selected', OPTIONS[i] + " white", 24);
+			menuItem.frames = Paths.getSparrowAtlas('ui/main-menu/menu-${OPTIONS[i][0]}');
+			menuItem.animation.addByPrefix('idle', '${OPTIONS[i][0]} basic', 24);
+			menuItem.animation.addByPrefix('selected', '${OPTIONS[i][0]} white', 24);
 			menuItem.animation.play('idle');
 
+			bgs.add(bg);
 			menuItems.add(menuItem);
 		}
 
-		changeSelection(curSelected);
+		bgs.members[curSelected].alpha = 1;
+		changeSelection();
 	}
 
 	override function update(elapsed:Float)
@@ -75,12 +73,12 @@ class MainMenuState extends MusicBeatState
 		{
 			if (FlxG.keys.justPressed.UP)
 			{
-				changeSelection(curSelected--);
+				changeSelection(-1);
 			}
 
 			if (FlxG.keys.justPressed.DOWN)
 			{
-				changeSelection(curSelected++);
+				changeSelection(1);
 			}
 
 			if (FlxG.keys.justPressed.ENTER)
@@ -88,63 +86,76 @@ class MainMenuState extends MusicBeatState
 				selectedSomething = true;
 
 				FlxG.sound.play(Paths.sound('menu-confirm'));
-				FlxFlicker.flicker(magenta, 1, 0.15, false);
 
 				menuItems.forEach(function(item:FlxSprite)
 				{
 					if (menuItems.members.indexOf(item) == curSelected)
 					{
-						FlxFlicker.flicker(menuItems.members[curSelected], 1, 0.05, false, false, function(flk:FlxFlicker)
+						FlxFlicker.flicker(item, 1, 0.05, true, false, function(flk:FlxFlicker)
 						{
-							switch (OPTIONS[curSelected])
+							switch (OPTIONS[curSelected][0])
 							{
-								case 'freeplay':
-									MusicBeatState.switchState(new LockstepState());
-
 								case 'options':
 									MusicBeatState.switchState(new OptionsMenuState());
+
+								default:
+									LockstepState.SONG = Song.loadFromJson('songs/${OPTIONS[curSelected][0]}');
+									MusicBeatState.switchState(new LockstepState());
 							}
 						});
 					}
 					else
 					{
-						FlxTween.tween(item, {alpha: 0}, 0.6, {ease: FlxEase.quadOut});
+						FlxTween.tween(item, { alpha: 0 }, 0.6, { ease: FlxEase.circOut });
 					}
 				});
 			}
 		}
-
-		menuItems.forEach(function(item:FlxSprite)
-		{
-			item.screenCenter(X);
-		});
 	}
 
-	function changeSelection(selected:Int)
+	function changeSelection(change:Int = 0)
 	{
 		FlxG.sound.play(Paths.sound('menu-scroll'));
 
-		if (curSelected >= menuItems.length)
+		curSelected += change;
+
+		if (curSelected < 0)
+		{
+			curSelected = OPTIONS.length - 1;
+		}
+		else if (curSelected >= OPTIONS.length)
 		{
 			curSelected = 0;
 		}
-		else if (curSelected < 0)
-		{
-			curSelected = menuItems.length - 1;
-		}
 
+		bgs.forEach(function(bg:FlxSprite)
+		{
+			if (bgs.members.indexOf(bg) == curSelected)
+			{
+				FlxTween.tween(bg, { alpha: 1 }, 0.3, { ease: FlxEase.circInOut });
+			}
+			else
+			{
+				FlxTween.tween(bg, { alpha: 0 }, 0.3, { ease: FlxEase.circInOut });
+			}
+		});
+		
 		menuItems.forEach(function(item:FlxSprite)
 		{
-			item.animation.play('idle');
-			item.offset.x = 0;
-			item.offset.y = 0;
-
 			if (menuItems.members.indexOf(item) == curSelected)
 			{
 				item.animation.play('selected');
-				item.offset.x = 0.15 * (item.frameWidth / 2 + 180);
-				item.offset.y = 0.15 * item.frameHeight;
+				item.offset.x = 60;
+				item.offset.y = 20;
 			}
+			else
+			{
+				item.animation.play('idle');
+				item.offset.x = 0;
+				item.offset.y = 0;
+			}
+
+			item.screenCenter(X);
 		});
 	}
 }

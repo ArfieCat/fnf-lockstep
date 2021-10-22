@@ -154,7 +154,7 @@ class AlphabetCharacter extends FlxSprite
 	{
 		letter = letter.toUpperCase();
 
-		animation.addByPrefix(letter, letter + ' bold', 24);
+		animation.addByPrefix(letter, '${letter} bold', 24);
 		animation.play(letter);
 		updateHitbox();
 	}
@@ -166,7 +166,7 @@ class AlphabetCharacter extends FlxSprite
 			letter = 'apostrophe';
 		}
 
-		animation.addByPrefix(letter, 'bold ' + letter, 24);
+		animation.addByPrefix(letter, 'bold ${letter}', 24);
 		animation.play(letter);
 		updateHitbox();
 

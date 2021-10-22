@@ -12,7 +12,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-using flixel.util.FlxSpriteUtil;
 using StringTools;
 
 /*
@@ -21,11 +20,11 @@ State containing the entirety of the mod's gameplay.
 
 class LockstepState extends MusicBeatState
 {
+	// magic numbers
     var POPULATION:Int = 473;
 	var PER_ROW:Int = 32;
 	var OFFSET_X:Int = 210;
 	var OFFSET_Y:Int = 280;
-
 	var STRUM_X:Int = 1180;
 	var STRUM_Y:Int = 620;
 
@@ -102,9 +101,6 @@ class LockstepState extends MusicBeatState
 			camStrums.visible = false;
 			camStrums.active = false;
 		}
-
-		// TODO: remove this
-		SONG = Song.loadFromJson('songs/lockstep');
 		
 		curSong = Utils.formatToSongPath(SONG.song);
 
@@ -377,7 +373,7 @@ class LockstepState extends MusicBeatState
 					}
 
 					// don't play the miss anim if he's mid-step or it looks weird
-					if (playableStepper.animation.curAnim.name == 'idle' || !playableStepper.animation.curAnim.name.startsWith('sing'))
+					if (playableStepper.animation.curAnim.name == 'idle' || playableStepper.animation.curAnim.name.endsWith('miss'))
 					{
 						switch (note.direction)
 						{
@@ -419,7 +415,7 @@ class LockstepState extends MusicBeatState
 		}
 
 		scoreText.text = 'Rating: ${songRating} (${Math.floor(songAccuracy * 10000) / 100}%)';
-		otherText.text = 'Current zoom level: ${camera.zoom}';
+		otherText.text = 'Current zoom level: ${Math.floor(camera.zoom * 10000) / 100}';
 
 		// check for specific keypresses
 		if ((FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER) && canMiss)
