@@ -105,18 +105,12 @@ class TitleState extends MusicBeatState
 				selectedSomething = true;
 
 				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
-				FlxFlicker.flicker(prompt, 2, 0.05, true, false);
+				FlxFlicker.flicker(prompt, 1, 0.05, true, false);
 
 				FlxTween.tween(camera, { zoom: 0.8 }, 1, { ease: FlxEase.circOut, 
 					onComplete: function(twn:FlxTween) 
 					{
-						// definitely enough zoom
-						FlxTween.tween(camera, { zoom: 100 }, 1, { ease: FlxEase.circOut, 
-							onComplete: function(twn:FlxTween) 
-							{
-								MusicBeatState.switchState(new MainMenuState());
-							}
-						});
+						MusicBeatState.switchState(new MainMenuState());
 					}
 				});
 			}
