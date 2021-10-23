@@ -36,7 +36,7 @@ class FlashingSubstate extends MusicBeatSubstate
 		warning2.screenCenter(X);
 		textGroup.add(warning2);
 
-		var prompt:Alphabet = new Alphabet(0, 480, 'Press ENTER to continue.', 0.6);
+		var prompt:Alphabet = new Alphabet(0, 480, 'Press ENTER to continue', 0.6);
 		prompt.screenCenter(X);
 		textGroup.add(prompt);
 	}

@@ -52,7 +52,7 @@ class ResultsSubstate extends MusicBeatSubstate
 		switch (rating)
 		{
 			case 'Try Again':
-				sound = Paths.sound('menu-cancel');
+				sound = Paths.sound('try-again');
 				icon = Paths.image('gameplay/try-again');
 				quip = 
 					"On the beat? You're a little off.\n" +
@@ -60,14 +60,14 @@ class ResultsSubstate extends MusicBeatSubstate
 					'Sloppy work on the transitions.\n';
 
 			case 'OK':
-				sound = Paths.sound('menu-scroll');
+				sound = Paths.sound('ok');
 				icon = Paths.image('gameplay/ok');
 				quip = 
 					'\n' +
 					'I guess that was all right.\n';
 
 			case 'Superb' | 'Perfect':
-				sound = Paths.sound('menu-confirm');
+				sound = Paths.sound('superb');
 				icon = Paths.image('gameplay/superb');
 				quip = 
 					'You were all right on the beat.\n' +
@@ -84,6 +84,7 @@ class ResultsSubstate extends MusicBeatSubstate
 		judgementIcon = new FlxSprite(900, 400).loadGraphic(icon);
 		judgementIcon.setGraphicSize(Std.int(judgementIcon.width * 0.8));
 		judgementIcon.x -= judgementIcon.width / 2;
+		judgementIcon.antialiasing = !ClientPrefs.lowQuality;
 		judgementIcon.visible = false;
 		add(judgementIcon);
 
@@ -116,11 +117,11 @@ class ResultsSubstate extends MusicBeatSubstate
 		judgementText.visible = true;
 		judgementIcon.visible = true;
 
-		FlxG.sound.play(sound);
+		FlxG.sound.play(sound).fadeOut(4, 0);
 
 		new FlxTimer().start(4, function(tmr:FlxTimer)
 		{
-			FlxTween.tween(fadeOut, { alpha: 1 }, Conductor.crochet / 500, { ease: FlxEase.circOut, 
+			FlxTween.tween(fadeOut, { alpha: 1 }, 1, { ease: FlxEase.circOut, 
 				onComplete: function(twn:FlxTween)
 				{
 					close();

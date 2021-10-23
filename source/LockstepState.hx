@@ -373,7 +373,7 @@ class LockstepState extends MusicBeatState
 					}
 
 					// don't play the miss anim if he's mid-step or it looks weird
-					if (playableStepper.animation.curAnim.name == 'idle' || playableStepper.animation.curAnim.name.endsWith('miss'))
+					if (playableStepper.animation.curAnim.name.endsWith('miss') || !playableStepper.animation.curAnim.name.startsWith('sing'))
 					{
 						switch (note.direction)
 						{
@@ -415,7 +415,10 @@ class LockstepState extends MusicBeatState
 		}
 
 		scoreText.text = 'Rating: ${songRating} (${Math.floor(songAccuracy * 10000) / 100}%)';
-		otherText.text = 'Current zoom level: ${Math.floor(camera.zoom * 10000) / 100}';
+		otherText.text = 
+			'Current zoom level: ${Math.floor(camera.zoom * 100) / 100}\n' +
+			'Offbeat: ${bgOffbeat.visible}\n' +
+			'Song: ${SONG.song}\n';
 
 		// check for specific keypresses
 		if ((FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER) && canMiss)

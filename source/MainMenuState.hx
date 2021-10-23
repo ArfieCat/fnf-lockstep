@@ -132,11 +132,11 @@ class MainMenuState extends MusicBeatState
 		{
 			if (bgs.members.indexOf(bg) == curSelected)
 			{
-				FlxTween.tween(bg, { alpha: 1 }, 0.3, { ease: FlxEase.circInOut });
+				FlxTween.tween(bg, { alpha: 1 }, 1, { ease: FlxEase.circInOut });
 			}
 			else
 			{
-				FlxTween.tween(bg, { alpha: 0 }, 0.3, { ease: FlxEase.circInOut });
+				FlxTween.tween(bg, { alpha: 0 }, 1, { ease: FlxEase.circInOut });
 			}
 		});
 		

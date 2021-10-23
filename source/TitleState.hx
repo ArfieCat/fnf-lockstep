@@ -5,6 +5,8 @@ import flixel.FlxSprite;
 import flixel.effects.FlxFlicker;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 
 /*
@@ -13,8 +15,14 @@ State containing the intro credits sequence and title screen.
 
 class TitleState extends MusicBeatState
 {
+	// magic numbers
+    var POPULATION:Int = 101;
+	var PER_ROW:Int = 21;
+	var OFFSET_X:Int = 210;
+	var OFFSET_Y:Int = 280;
+
 	var logo:FlxSprite;
-	var prompt:Alphabet;
+	var prompt:FlxSprite;
 
 	var black:FlxSprite;
 	var textGroup:FlxTypedGroup<Alphabet>;
@@ -33,15 +41,14 @@ class TitleState extends MusicBeatState
 		
 		super.create();
 
-		logo = new FlxSprite(0, -80);
-		logo.frames = Paths.getSparrowAtlas('ui/logoBumpin');
-		logo.animation.addByPrefix('bump', 'logo bumpin', 24, false);
+		logo = new FlxSprite(100, 0).loadGraphic(Paths.image('ui/logo'));
+		logo.screenCenter(Y);
+		logo.angle = 5;
 		logo.antialiasing = !ClientPrefs.lowQuality;
-		logo.screenCenter(X);
 		add(logo);
-
-		prompt = new Alphabet(0, 600, 'Press ENTER to start');
-		prompt.screenCenter(X);
+	
+		prompt = new Alphabet(0, 600, 'Press Enter', 1.2, true);
+		prompt.x += 600;
 		add(prompt);
 
 		if (!FlxG.save.data.seenWarning)
@@ -72,6 +79,9 @@ class TitleState extends MusicBeatState
 	function skipIntro()
 	{
 		finishedIntro = true;
+
+		// sine waves are periodic :)
+		FlxTween.tween(logo, { angle: -logo.angle }, Conductor.crochet / 250, { ease: FlxEase.sineInOut, type: PINGPONG });
 		
 		FlxG.camera.flash(0xFFFFFFFF, 3);
 		black.visible = false;
@@ -93,26 +103,36 @@ class TitleState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('menu-confirm'));
 
 				selectedSomething = true;
-				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
-				FlxFlicker.flicker(prompt, 1.5, 0.05);
 
-				new FlxTimer().start(1, function(tmr:FlxTimer)
-				{
-					MusicBeatState.switchState(new MainMenuState());
+				FlxG.camera.flash(0xFFFFFFFF, 1, null, true);
+				FlxFlicker.flicker(prompt, 2, 0.05, true, false);
+
+				FlxTween.tween(camera, { zoom: 0.8 }, 1, { ease: FlxEase.circOut, 
+					onComplete: function(twn:FlxTween) 
+					{
+						// definitely enough zoom
+						FlxTween.tween(camera, { zoom: 100 }, 1, { ease: FlxEase.circOut, 
+							onComplete: function(twn:FlxTween) 
+							{
+								MusicBeatState.switchState(new MainMenuState());
+							}
+						});
+					}
 				});
 			}
 		}
 
 		// reset camera zoom 
-		var lerpVal:Float = Utils.boundTo(elapsed * 10, 0, 1);
-		camera.zoom = FlxMath.lerp(camera.zoom, 1, lerpVal);
+		if (!selectedSomething)
+		{
+			var lerpVal:Float = Utils.boundTo(elapsed * 10, 0, 1);
+			camera.zoom = FlxMath.lerp(camera.zoom, 1, lerpVal);
+		}
 	}
 
     override function beatHit()
     {
         super.beatHit();
-
-		logo.animation.play('bump');
 
 		if (!finishedIntro)
 		{
@@ -170,6 +190,13 @@ class TitleState extends MusicBeatState
 				case 16:
 					clearText();
 					skipIntro();
+			}
+		}
+		else
+		{
+			if (curBeat % 2 == 1 && !selectedSomething)
+			{
+				camera.zoom += 0.05;
 			}
 		}
     }
